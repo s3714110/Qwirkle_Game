@@ -17,10 +17,10 @@ public:
 	Player(std::string id, std::string name);
 	std::string getName();
 	int getScore();
+	int tilesInHand();
 	void addToScore(int points);
 	void addToHand(Tile* tile);
 	void removeFromHand(Tile* tile);
 	PlayerHand getPlayerHand();
-
 	bool playerHasTile(Tile* tile);
 };

@@ -10,6 +10,8 @@ void displayMessage(std::string message);
 void displayBoard(Board* board);
 void displayScoreBoard(Player** players, int playerCount);
 void displayPlayerHand(Player* player);
+void displayEndgame(Player** players, int playerCount);
+void displayHelp();
 
 
 int getMenuChoice();

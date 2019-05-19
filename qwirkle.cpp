@@ -1,7 +1,7 @@
-#include "Game.h"
+#include "Menu.h"
 
 int main()
 {
-  Game* game = new Game();
-  game->getTiles();
+  Menu* menu = new Menu();
+	menu->run();
 }

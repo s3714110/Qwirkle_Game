@@ -11,30 +11,23 @@
 // tiles are destroyed in the Game destructor
 class Game {
 private:
-
 	LinkedList* tiles;
-	   	
 	Board* board;
 	Player** players;
 	TileBag* tilebag;
-
 	int playerCount;
-
-
 	LinkedList* init_tiles();
+	void fillPlayerHand(Player* player);
 	void init_playerhand();
 
 public:
 	Game(Board* board, Player** players, int playerCount);
 	~Game();
-
 	void run();
-	bool playerMove(Player* player);
-
 	LinkedList* getTiles();
 	Tile* getTile(std::string tileString);
-
 	bool replace(Player* player, Tile* tile);
 	bool place(Player* player, Tile* tile, int row, int col);
+	bool playerMove(Player* player);
 
 };

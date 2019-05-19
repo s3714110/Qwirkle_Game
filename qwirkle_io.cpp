@@ -20,6 +20,7 @@ void displayMenu() {
 	std::cout << "4. Quit" << std::endl;
 	std::cout << "\n" << std::endl;
 }
+
 void displayMessage(std::string message) {
 	std::cout << message << std::endl;
 }
@@ -58,12 +59,14 @@ void displayBoard(Board* board) {
 	std::cout << board_ss.str() << std::endl;
 	displayMessage("\n");
 }
+
 void displayScoreBoard(Player** players, int playerCount) {
 	for (int i = 0; i < playerCount; i++) {
 		std::cout << "Score for " << players[i]->getName() << ": " << players[i]->getScore() << std::endl;
 	}
 	displayMessage("\n");
 }
+
 void displayPlayerHand(Player* player) {
 	LinkedList* hand = player->getPlayerHand();
 
@@ -78,6 +81,38 @@ void displayPlayerHand(Player* player) {
 	std::cout << std::endl;
 }
 
+void displayHelp(){
+	std::cout << "\n\nHelp\n" << std::endl;
+	std::cout << "-----------------------------\n" << std::endl;
+	std::cout << "To place a tile, enter:" << std::endl;
+	std::cout << "place .. at .." << std::endl;
+	std::cout << "For example, place G5 at B3\n" << std::endl;
+	std::cout << "To replace a tile in your hand, enter:" << std::endl;
+	std::cout << "replace .." << std::endl;
+	std::cout << "For example, replace G5\n" << std::endl;
+	std::cout << "To save the game, enter:" << std::endl;
+	std::cout << "save <filename>" << std::endl;
+	std::cout << "For example, save saveGame\n" << std::endl;
+}
+
+void displayEndgame(Player** players, int playerCount){
+
+	Player* winner = players[0];
+
+	std::cout << "\nGame over" << std::endl;
+	for(int i=0; i < playerCount; i++){
+		std::cout << "Score for " << players[i]->getName() << ": " << players[i]->getScore() << std::endl;
+	}
+
+	// Find the highest score and declare that player the winner!
+	for(int i = 0; i < playerCount; i++){
+		if(players[i]->getScore() > winner->getScore()){
+			winner = players[i];
+		}
+	}
+	std::cout << "Player " << winner->getName() << " won!\n" << std::endl;
+	std::cout << "Goodbye!\n" << std::endl;
+}
 
 /*
 
@@ -85,9 +120,9 @@ void displayPlayerHand(Player* player) {
 
 */
 int getMenuChoice() {
+
 	int option = -1;
 
-	
 	do {
 		option = getUserInput_menu();
 		if (option < 0 || option > 4) {
@@ -97,10 +132,12 @@ int getMenuChoice() {
 
 	return option;
 }
+
 std::string getFilename() {
 	displayMessage("\nEnter the filename from which to load the game");
 	return getUserInput_filename();
 }
+
 int getPlayerCount() {
 	int playerCount = -1;
 
@@ -114,6 +151,7 @@ int getPlayerCount() {
 
 	return playerCount;
 }
+
 std::string getPlayerName(int playerNum) {
 	std::string playerName = "";
 
@@ -127,25 +165,25 @@ std::string getPlayerName(int playerNum) {
 
 	return playerName;
 }
+
 int getBoardSize() {
 	int boardSize = -1;
 
-	displayMessage("\nEnter a board size (2-26)");
+	displayMessage("\nEnter a board size (6-26)");
 	do {
 		boardSize = getUserInput_int();
-		if (boardSize < 2 || boardSize > 26) {
+		if (boardSize < 6 || boardSize > 26) {
 			displayMessage("\nInvalid Board Size");
 		}
-	} while (boardSize < 2 || boardSize > 26);
+	} while (boardSize < 6 || boardSize > 26);
 
 	return boardSize;
 }
 std::vector<std::string> getPlayerMove() {
 	std::cout << "\n>";
-	
+
 	return getUserInput_move();
 }
-
 
 int getUserInput_int() {
 	int value = -1;
@@ -164,9 +202,10 @@ int getUserInput_int() {
 
 	return value;
 }
+
 std::string getUserInput_string() {
 	std::string value = "";
-	
+
 	std::string input;
 	if (!getline(std::cin, input)) {
 		return value;
@@ -194,6 +233,7 @@ int getUserInput_menu() {
 
 	return value;
 }
+
 /*
 	NEED TO IMPLEMENT
 
@@ -201,11 +241,12 @@ int getUserInput_menu() {
 std::string getUserInput_filename() {
 	return getUserInput_string();
 }
+
 std::string getUserInput_playername() {
 	std::string value = "";
 
 	std::string input;
-	
+
 	if (!getline(std::cin, input)) {
 		return value;
 	}
@@ -220,6 +261,7 @@ std::string getUserInput_playername() {
 
 	return value;
 }
+
 std::string getUserInput_tile() {
 	std::string value = "";
 
@@ -249,6 +291,7 @@ std::vector<std::string> getUserInput_move() {
 
 	std::regex place_regex("^place [ROYGBP][1-6] at [A-Z][0-9][0-9]?$");
 	std::regex replace_regex("^replace [ROYGBP][1-6]$");
+	std::regex help_regex("help");
 	std::smatch m;
 
 	// get place
@@ -259,10 +302,21 @@ std::vector<std::string> getUserInput_move() {
 		move.push_back(input.substr(tile_pos, 2));
 		move.push_back(input.substr(coord_pos));
 	}
+
 	// get replace
 	else if (std::regex_match(input, m, replace_regex)) {
 		std::size_t tile_pos = input.find_first_of(" ") + 1;
 		move.push_back(input.substr(tile_pos));
+	}
+
+	// get help
+	else if(std::regex_match(input, m, help_regex)){
+		displayHelp();
+	}
+
+	// Display invalid move if they enter an invalid move
+	else{
+		displayMessage("\nInvalid Move\n");
 	}
 
 	return move;

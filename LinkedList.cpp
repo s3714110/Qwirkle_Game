@@ -41,11 +41,11 @@ void LinkedList::add(Tile* tile, int index) {
 	if (tile == nullptr) {
 		return;
 	}
-			
+
 
 	Node* newNode = new Node(tile);
 
-	if (index == 0) {		
+	if (index == 0) {
 		addHeadNode(newNode);
 	}
 	else {
@@ -61,7 +61,7 @@ void LinkedList::addHead(Tile* tile) {
 
 
 	Node* newNode = new Node(tile);
-	addHeadNode(newNode);	
+	addHeadNode(newNode);
 }
 void LinkedList::addTail(Tile* tile) {
 
@@ -74,7 +74,7 @@ void LinkedList::addTail(Tile* tile) {
 	if (count == 0) {
 		addHeadNode(newNode);
 	}
-	else {		
+	else {
 		addTailNode(newNode);
 	}
 }
@@ -190,7 +190,6 @@ int LinkedList::size() {
 	return count;
 }
 
-
 // private functions
 void LinkedList::addNode(Node* prev, Node* newNode) {
 	newNode->setNext(prev->nextNode());
@@ -209,14 +208,14 @@ void LinkedList::addTailNode(Node* newNode) {
 }
 
 void LinkedList::removeNode(Node* prev, Node* delNode) {
-	
+
 	prev->setNext(delNode->nextNode());
 	delete delNode;
 	count--;
 }
 void LinkedList::removeHeadNode() {
 	Node* delNode = head;
-	
+
 	head = delNode->nextNode();
 	delete delNode;
 	count--;
@@ -231,7 +230,7 @@ void LinkedList::removeTailNode() {
 	}
 
 	removeNode(prev, delNode);
-	
+
 }
 
 Node* LinkedList::getNode(int index) {

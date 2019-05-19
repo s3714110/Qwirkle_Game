@@ -4,7 +4,6 @@
 Player::Player(std::string id, std::string name) {
 	this->id = id;
 	this->name = name;
-	this->hand = hand;
 	score = 0;
 	hand = new LinkedList();
 }
@@ -31,6 +30,10 @@ PlayerHand Player::getPlayerHand(){
 	return hand;
 }
 
+int Player::tilesInHand(){
+	return hand->size();
+}
+
 bool Player::playerHasTile(Tile* tile) {
 	bool status = false;
 
@@ -42,5 +45,3 @@ bool Player::playerHasTile(Tile* tile) {
 
 	return status;
 }
-
-

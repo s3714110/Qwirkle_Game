@@ -51,20 +51,26 @@ LinkedList* Game::init_tiles() {
 }
 
 void Game::init_playerhand() {
+
 	// For each player, initialise their hands with 6 tiles each
 	for (int i = 0; i < playerCount; i++) {
-		for (int j = 0; j < 6; j++) {
+		int currentTiles = players[i]->tilesInHand();
+		for (int j = 0; j < 6 - currentTiles; j++) {
 			Tile* tile = tilebag->removeFromBag();
 			players[i]->addToHand(tile);
 		}
 	}
 }
 
-Game::Game(Board* board, Player** players, int playerCount) {
+void Game::fillPlayerHand(Player* player){
+	int currentTiles = player->tilesInHand();
+	for (int j = 0; j < 6 - currentTiles; j++) {
+		Tile* tile = tilebag->removeFromBag();
+		player->addToHand(tile);
+	}
+}
 
-	// Random number generator
-	int min = 1;
-	int max = 36;
+Game::Game(Board* board, Player** players, int playerCount) {
 
 	tiles = init_tiles();
 	init_tiles();
@@ -78,6 +84,7 @@ Game::Game(Board* board, Player** players, int playerCount) {
 	// Initialise Player hands
 	init_playerhand();
 }
+
 Game::~Game() {
 
 	for (int i = 0; i < tiles->size(); i++) {
@@ -100,11 +107,11 @@ LinkedList* Game::getTiles() {
 
 Tile* Game::getTile(std::string tileString) {
 	Tile* tile = nullptr;
-	
+
 	Tile* searchTile = nullptr;
 	for (int i = 0; i < tiles->size(); i++) {
 		searchTile = tiles->get(i);
-		
+
 		if ( 0 == tileString.compare(searchTile->toString())) {
 			tile = searchTile;
 			break;
@@ -124,18 +131,21 @@ void Game::run() {
 	while (endgame == false) {
 		currentPlayer = players[playersTurn];
 
-		// Get the current players hands
-		LinkedList* hand = currentPlayer->getPlayerHand();
-
-
 		displayMessage(currentPlayer->getName() + ", its your turn!\n");
 		displayScoreBoard(players, playerCount);
 		displayBoard(board);
 		displayPlayerHand(currentPlayer);
 
-
+		// Loop so that the player can input until a valid move is inputted
 		while (!playerMove(currentPlayer)) {
-			displayMessage("\nInvalid Move\n");
+
+		}
+
+		fillPlayerHand(currentPlayer);
+
+		// Check if player hand is empty and end the game if it is
+		if(currentPlayer->getPlayerHand()->size() == 0){
+			endgame = true;
 		}
 
 		playersTurn++;
@@ -143,9 +153,12 @@ void Game::run() {
 			playersTurn = 0;
 		}
 	}
+
+	displayEndgame(players, playerCount);
 }
 
 bool Game::playerMove(Player* player) {
+
 	bool status = false;
 
 	std::vector<std::string> move = getPlayerMove();
@@ -161,12 +174,10 @@ bool Game::playerMove(Player* player) {
 		return status;
 	}
 
-
 	// Passed all checks
-
 	// Do Replace
 	if (move.size() == 1) {
-		if (replace(player, tile)) {
+		if(replace(player, tile)) {
 			status = true;
 		}
 	}
@@ -181,7 +192,6 @@ bool Game::playerMove(Player* player) {
 			status = true;
 		}
 	}
-
 
 	return status;
 }
@@ -210,10 +220,3 @@ bool Game::place(Player* player, Tile* tile, int row, int col) {
 
 	return status;
 }
-
-
-
-
-
-
-
