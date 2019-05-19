@@ -1,5 +1,6 @@
 #pragma once
 #include "Tile.h"
+#include "LinkedList.h"
 #include <map>
 
 
@@ -62,33 +63,33 @@
 #define _COL_25_ "25"
 
 
-const std::map<int, std::string> rows = {
-  { 0, _ROW_A_ },
-  { 1, _ROW_B_ },
-  { 2, _ROW_C_ },
-  { 3, _ROW_D_ },
-  { 4, _ROW_E_ },
-  { 5, _ROW_F_ },
-  { 6, _ROW_G_ },
-  { 7, _ROW_H_ },
-  { 8, _ROW_I_ },
-  { 9, _ROW_J_ },
-  { 10, _ROW_K_ },
-  { 11, _ROW_L_ },
-  { 12, _ROW_M_ },
-  { 13, _ROW_N_ },
-  { 14, _ROW_O_ },
-  { 15, _ROW_P_ },
-  { 16, _ROW_Q_ },
-  { 17, _ROW_R_ },
-  { 18, _ROW_S_ },
-  { 19, _ROW_T_ },
-  { 20, _ROW_U_ },
-  { 21, _ROW_V_ },
-  { 22, _ROW_W_ },
-  { 23, _ROW_X_ },
-  { 24, _ROW_Y_ },
-  { 25, _ROW_Z_ }
+const std::map<std::string, int> rows = {
+  { _ROW_A_, 0 },
+  { _ROW_B_, 1 },
+  { _ROW_C_, 2 },
+  { _ROW_D_, 3 },
+  { _ROW_E_, 4 },
+  { _ROW_F_, 5 },
+  { _ROW_G_, 6 },
+  { _ROW_H_, 7 },
+  { _ROW_I_, 8 },
+  { _ROW_J_, 9 },
+  { _ROW_K_, 10 },
+  { _ROW_L_, 11 },
+  { _ROW_M_, 12 },
+  { _ROW_N_, 13 },
+  { _ROW_O_, 14 },
+  { _ROW_P_, 15 },
+  { _ROW_Q_, 16 },
+  { _ROW_R_,17 },
+  { _ROW_S_, 18 },
+  { _ROW_T_, 19 },
+  { _ROW_U_, 20 },
+  { _ROW_V_, 21 },
+  { _ROW_W_, 22 },
+  { _ROW_X_, 23 },
+  { _ROW_Y_, 24 },
+  { _ROW_Z_, 25 }
 };
 const std::map<int, std::string> columns = {
   { 0, _COL_0_ },
@@ -208,6 +209,18 @@ private:
 	CellPtr** board; // board[row][col]
 	int height;
 	int width;
+	bool empty; // board is empty
+
+	bool checkRow(int row, int col, Tile* tile);
+	bool checkColumn(int row, int col, Tile* tile);
+
+	bool colorMatch(LinkedList* tiles, Tile* tile);
+	bool shapeMatch(LinkedList* tiles, Tile* tile);
+
+	LinkedList* getRow(int row, int col);
+	LinkedList* getColumn(int row, int col);
+
+	int getPoints(Tile* tile, int row, int col);
 
 public:
 	Board(int row, int col);
@@ -215,9 +228,8 @@ public:
 
 	int getHeight();
 	int getWidth();
-	std::string toString();
+	CellPtr getCell(int row, int col);
 
-	bool placeTile(Tile* tile, int row, int col);
+	bool placeTile(Tile* tile, int row, int col, int& points);
 	bool isValidMove(Tile* tile, int row, int col);
-
 };

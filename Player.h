@@ -11,8 +11,16 @@ private:
 	std::string id;
 	std::string name;
 	int score;
-	PlayerHand playerhand;
+	PlayerHand hand;
 
 public:
 	Player(std::string id, std::string name);
+	std::string getName();
+	int getScore();
+	void addToScore(int points);
+	void addToHand(Tile* tile);
+	void removeFromHand(Tile* tile);
+	PlayerHand getPlayerHand();
+
+	bool playerHasTile(Tile* tile);
 };

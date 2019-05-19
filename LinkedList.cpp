@@ -167,6 +167,25 @@ Tile* LinkedList::getTail() {
 	return tile;
 }
 
+bool LinkedList::contains(Tile* tile) {
+	bool found = false;
+
+	Node* node = head;
+	Tile* checkTile = nullptr;
+	while (node != nullptr) {
+		checkTile = node->getTile();
+
+		if (tile->equal(checkTile)) {
+			found = true;
+			break;
+		}
+
+		node = node->nextNode();
+	}
+
+	return found;
+}
+
 int LinkedList::size() {
 	return count;
 }

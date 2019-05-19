@@ -2,8 +2,8 @@
 #include <sstream>
 
 Tile::Tile(COLOR color, SHAPE shape) {
-	Tile::color = color;
-	Tile::shape = shape;
+	this->color = color;
+	this->shape = shape;
 }
 
 COLOR Tile::getColor() {
@@ -27,7 +27,18 @@ bool Tile::equal(Tile* tile) {
 	return equal;
 
 }
-
+bool Tile::sameColor(Tile* tile) {
+	if (tile == nullptr) {
+		return false;
+	}
+	return color == tile->getColor();
+}
+bool Tile::sameShape(Tile* tile) {
+	if (tile == nullptr) {
+		return false;
+	}
+	return shape == tile->getShape();
+}
 std::string Tile::toString() {
 	std::stringstream tile_ss;
 

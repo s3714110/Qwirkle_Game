@@ -50,5 +50,7 @@ public:
 	Tile* getHead();
 	Tile* getTail();
 
+	bool contains(Tile* tile);
+
 	int size();		
 };

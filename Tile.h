@@ -47,5 +47,7 @@ public:
 	COLOR getColor();
 	SHAPE getShape();
 	bool equal(Tile* tile);
+	bool sameColor(Tile* tile);
+	bool sameShape(Tile* tile);
 	std::string toString();
 };
