@@ -65,8 +65,10 @@ void Game::init_playerhand() {
 void Game::fillPlayerHand(Player* player){
 	int currentTiles = player->tilesInHand();
 	for (int j = 0; j < 6 - currentTiles; j++) {
-		Tile* tile = tilebag->removeFromBag();
-		player->addToHand(tile);
+		if(tilebag->amountTilesLeft() > 0){
+			Tile* tile = tilebag->removeFromBag();
+			player->addToHand(tile);
+		}
 	}
 }
 
@@ -131,15 +133,8 @@ void Game::run() {
 	while (endgame == false) {
 		currentPlayer = players[playersTurn];
 
-		displayMessage(currentPlayer->getName() + ", its your turn!\n");
-		displayScoreBoard(players, playerCount);
-		displayBoard(board);
-		displayPlayerHand(currentPlayer);
-
-		// Loop so that the player can input until a valid move is inputted
-		while (!playerMove(currentPlayer)) {
-
-		}
+		// Loop so that the player can input until they input "end"
+		playerMove(currentPlayer);
 
 		fillPlayerHand(currentPlayer);
 
@@ -157,52 +152,72 @@ void Game::run() {
 	displayEndgame(players, playerCount);
 }
 
-bool Game::playerMove(Player* player) {
+void Game::playerMove(Player* player) {
 
-	bool status = false;
+	bool end = false;
+	int counter = 1;
 
-	std::vector<std::string> move = getPlayerMove();
+	while(!end){
+		displayMessage("\n\n" + player->getName() + ", its your turn!\n");
+		displayScoreBoard(players, playerCount);
+		displayBoard(board);
+		displayPlayerHand(player);
 
-	// invalid entry
-	if (move.size() == 0) {
-		return status;
-	}
+		std::vector<std::string> move = getPlayerMove();
 
-	// player doesnt have tile return
-	Tile* tile = getTile(move.at(0));
-	if (!player->playerHasTile(tile)) {
-		return status;
-	}
-
-	// Passed all checks
-	// Do Replace
-	if (move.size() == 1) {
-		if(replace(player, tile)) {
-			status = true;
+		// invalid entry
+		if (move.size() == 0) {
+			continue;
 		}
-	}
-	// Do Place (Need a better what of converting user input into row/col value)
-	else if (move.size() == 2) {
-		std::string _row_ = move.at(1).substr(0, 1);
-		std::string _col_ = move.at(1).substr(1);
 
-		int row = rows.find(_row_)->second;
-		int col = std::stoi(_col_);
-		if (place(player, tile, row, col)) {
-			status = true;
+		else if(move.at(0).compare("end") == 0 && counter > 1){
+			end = true;
 		}
+
+		else{
+
+			// player doesnt have tile return
+			Tile* tile = getTile(move.at(1));
+
+			if (!player->playerHasTile(tile)) {
+				continue;
+			}
+
+			// Passed all checks
+			// Do Replace
+			if (move.at(0).compare("replace") == 0 && counter < 2) {
+				if(replace(player, tile)) {
+					end = true;
+				}
+			}
+
+			// Do Place (Need a better what of converting user input into row/col value)
+			else if (move.at(0).compare("place") == 0) {
+				std::string _row_ = move.at(2).substr(0, 1);
+				std::string _col_ = move.at(2).substr(1);
+
+				int row = rows.find(_row_)->second;
+				int col = std::stoi(_col_);
+				place(player, tile, row, col);
+
+			}
+		}
+
+
+		counter++;
 	}
 
-	return status;
 }
 
 bool Game::replace(Player* player, Tile* tile) {
 	bool status = false;
 
-	player->removeFromHand(tile);
-	Tile* newTile = tilebag->removeFromBag();
-	player->addToHand(newTile);
-	status = true;
+	if(tilebag->amountTilesLeft() > 0){
+		player->removeFromHand(tile);
+		Tile* newTile = tilebag->removeFromBag();
+		player->addToHand(newTile);
+		status = true;
+	}
 
 	return status;
 }

@@ -28,6 +28,6 @@ public:
 	Tile* getTile(std::string tileString);
 	bool replace(Player* player, Tile* tile);
 	bool place(Player* player, Tile* tile, int row, int col);
-	bool playerMove(Player* player);
+	void playerMove(Player* player);
 
 };

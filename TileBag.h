@@ -2,7 +2,7 @@
 #include "Tile.h"
 #include "LinkedList.h"
 
-#define NUM_UNIQUE_TILES 1
+#define NUM_UNIQUE_TILES 2
 
 class TileBag {
 private:

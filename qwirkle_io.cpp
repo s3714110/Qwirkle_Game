@@ -169,13 +169,13 @@ std::string getPlayerName(int playerNum) {
 int getBoardSize() {
 	int boardSize = -1;
 
-	displayMessage("\nEnter a board size (6-26)");
+	displayMessage("\nEnter a board size (9-26)");
 	do {
 		boardSize = getUserInput_int();
-		if (boardSize < 6 || boardSize > 26) {
+		if (boardSize < 9 || boardSize > 26) {
 			displayMessage("\nInvalid Board Size");
 		}
-	} while (boardSize < 6 || boardSize > 26);
+	} while (boardSize < 9 || boardSize > 26);
 
 	return boardSize;
 }
@@ -292,6 +292,7 @@ std::vector<std::string> getUserInput_move() {
 	std::regex place_regex("^place [ROYGBP][1-6] at [A-Z][0-9][0-9]?$");
 	std::regex replace_regex("^replace [ROYGBP][1-6]$");
 	std::regex help_regex("help");
+	std::regex end_regex("end");
 	std::smatch m;
 
 	// get place
@@ -299,6 +300,7 @@ std::vector<std::string> getUserInput_move() {
 		std::size_t tile_pos = input.find_first_of(" ") + 1;
 		std::size_t coord_pos = input.find_last_of(" ") + 1;
 
+		move.push_back("place");
 		move.push_back(input.substr(tile_pos, 2));
 		move.push_back(input.substr(coord_pos));
 	}
@@ -306,12 +308,18 @@ std::vector<std::string> getUserInput_move() {
 	// get replace
 	else if (std::regex_match(input, m, replace_regex)) {
 		std::size_t tile_pos = input.find_first_of(" ") + 1;
+		move.push_back("replace");
 		move.push_back(input.substr(tile_pos));
 	}
 
 	// get help
 	else if(std::regex_match(input, m, help_regex)){
 		displayHelp();
+	}
+
+	// get end
+	else if(std::regex_match(input, m, end_regex)){
+		move.push_back("end");
 	}
 
 	// Display invalid move if they enter an invalid move
