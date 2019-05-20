@@ -2,19 +2,13 @@
 #include <random>
 
 TileBag::TileBag(LinkedList* tiles) {
-	shuffledList = new LinkedList();
-
-	// Make an unshuffled list with the requested amount of copies of
-	//  each tile
-	for(int i=0;i< NUM_UNIQUE_TILES;i++){
-		for(int j=0;j<tiles->size();j++){
-			shuffledList->add(tiles->get(j));
-		}
-	}
-
-	shuffledList = shuffleBag(shuffledList);
+	shuffledList = tiles;
+	amountTiles = shuffledList->size();
+	//shuffledList = shuffleBag(shuffledList);
 }
-
+TileBag::~TileBag() {
+	delete shuffledList;
+}
 Tile* TileBag::removeFromBag(){
 	Tile* tile = shuffledList->get(1);
 	shuffledList->removeHead();
@@ -23,6 +17,7 @@ Tile* TileBag::removeFromBag(){
 
 void TileBag::addToBag(Tile* tile){
 	shuffledList->addTail(tile);
+	amountTiles++;
 }
 
 LinkedList* TileBag::shuffleBag(LinkedList* unshuffledList){

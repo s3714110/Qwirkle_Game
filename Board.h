@@ -230,6 +230,7 @@ public:
 	int getWidth();
 	CellPtr getCell(int row, int col);
 
+	void setTile(Tile* tile, int row, int col);
 	bool placeTile(Tile* tile, int row, int col, int& points);
 	bool isValidMove(Tile* tile, int row, int col);
 };

@@ -71,20 +71,44 @@ void Game::fillPlayerHand(Player* player){
 		}
 	}
 }
-
+// when new game
 Game::Game(Board* board, Player** players, int playerCount) {
+	// Make an unshuffled list with the requested amount of copies of
+//  each tile
 
 	tiles = init_tiles();
 	init_tiles();
-	// Creates a tile bag full of random tiles
-	tilebag = new TileBag(tiles);
+
 
 	this->board = board;
 	this->players = players;
 	this->playerCount = playerCount;
+	this->playerTurn = 0;
+
+	// Creates a tile bag full of random tiles
+	LinkedList* tilebagList = new LinkedList();
+
+	for (int i = 0; i < NUM_UNIQUE_TILES; i++) {
+		for (int j = 0; j < tiles->size(); j++) {
+			tilebagList->add(tiles->get(j));
+		}
+	}
+	tilebag = new TileBag(tilebagList);
 
 	// Initialise Player hands
 	init_playerhand();
+}
+// when loading game
+Game::Game(Board* board, Player** players, int playerCount, TileBag* tilebag, int playerTurn) {
+
+	tiles = init_tiles();
+	init_tiles();
+
+	this->board = board;
+	this->players = players;
+	this->playerCount = playerCount;
+	this->playerTurn = playerTurn;
+	this->tilebag = tilebag;
 }
 
 Game::~Game() {
@@ -127,11 +151,9 @@ Tile* Game::getTile(std::string tileString) {
 void Game::run() {
 	bool endgame = false;
 	Player* currentPlayer = nullptr;
-	int playersTurn = 0;
-
-
+	
 	while (endgame == false) {
-		currentPlayer = players[playersTurn];
+		currentPlayer = players[playerTurn];
 
 		// Loop so that the player can input until they input "end"
 		playerMove(currentPlayer);
@@ -143,9 +165,9 @@ void Game::run() {
 			endgame = true;
 		}
 
-		playersTurn++;
-		if (playersTurn > playerCount - 1) {
-			playersTurn = 0;
+		playerTurn++;
+		if (playerTurn > playerCount - 1) {
+			playerTurn = 0;
 		}
 	}
 

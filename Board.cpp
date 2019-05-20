@@ -66,6 +66,9 @@ CellPtr Board::getCell(int row, int col) {
 	return board[row][col];
 }
 
+void Board::setTile(Tile* tile, int row, int col) {
+	board[row][col]->setTile(tile);
+}
 // Places tile on the board at position (row, col)
 bool Board::placeTile(Tile* tile, int row, int col, int& points) {
 

@@ -14,6 +14,7 @@ private:
 	LinkedList* tiles;
 	Board* board;
 	Player** players;
+	int playerTurn;
 	TileBag* tilebag;
 	int playerCount;
 	LinkedList* init_tiles();
@@ -22,8 +23,10 @@ private:
 
 public:
 	Game(Board* board, Player** players, int playerCount);
+	Game(Board* board, Player** players, int playerCount, TileBag* tilebag, int playerTurn);
 	~Game();
 	void run();
+
 	LinkedList* getTiles();
 	Tile* getTile(std::string tileString);
 	bool replace(Player* player, Tile* tile);
