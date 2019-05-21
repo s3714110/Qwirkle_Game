@@ -1,9 +1,10 @@
-#include "Menu.h"
-#include "qwirkle_io.h"
 #include <fstream>
 #include <regex>
 #include <iostream>
 #include <sstream>
+
+#include "qwirkle_io.h"
+#include "Menu.h"
 
 
 Menu::Menu() {
@@ -32,9 +33,9 @@ void Menu::run() {
 				Game* game = loadGame();
 				if (game != nullptr) {
 					game->run();
-				}
-				delete game;
-				exit(EXIT_SUCCESS);
+					delete game;
+					exit(EXIT_SUCCESS);
+				}			
 			}
 			else if (option == 3) {
 				displayMessage("\nShowing student info");

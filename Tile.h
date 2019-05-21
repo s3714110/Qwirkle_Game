@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _TILE_
+#define _TILE_
+
 #include <string>
 
 
@@ -51,3 +53,4 @@ public:
 	bool sameShape(Tile* tile);
 	std::string toString();
 };
+#endif

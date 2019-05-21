@@ -4,7 +4,10 @@
 TileBag::TileBag(LinkedList* tiles) {
 	shuffledList = tiles;
 	amountTiles = shuffledList->size();
-	//shuffledList = shuffleBag(shuffledList);
+	
+	if (tiles->size() > 0) {
+		shuffledList = shuffleBag(shuffledList);
+	}
 }
 TileBag::~TileBag() {
 	delete shuffledList;
@@ -36,6 +39,9 @@ LinkedList* TileBag::shuffleBag(LinkedList* unshuffledList){
 		shuffledList->add(unshuffledList->get(index));
 		unshuffledList->remove(index);
 	}
+
+	delete unshuffledList;
+
 	return shuffledList;
 }
 

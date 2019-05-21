@@ -1,7 +1,11 @@
-#pragma once
+//#pragma once
+#ifndef _QWIRKLE_IO_
+#define _QWIRKLE_IO_
+
+#include <vector>
+
 #include "Board.h"
 #include "Player.h"
-#include <vector>
 
 
 
@@ -27,3 +31,5 @@ std::string getUserInput_filename();
 std::string getUserInput_playername();
 std::string getUserInput_tile();
 std::vector<std::string> getUserInput_move();
+
+#endif

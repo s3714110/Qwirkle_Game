@@ -1,5 +1,6 @@
-#pragma once
-#include "Tile.h"
+#ifndef _TILE_BAG_
+#define _TILE_BAG_
+
 #include "LinkedList.h"
 
 #define NUM_UNIQUE_TILES 2
@@ -17,3 +18,4 @@ public:
 	LinkedList* shuffleBag(LinkedList* unshuffledList);
 	int amountTilesLeft();
 };
+#endif

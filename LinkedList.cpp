@@ -80,54 +80,42 @@ void LinkedList::addTail(Tile* tile) {
 }
 
 void LinkedList::remove(Tile* tile) {
-
-	bool found = false;
-
+	
 	Node* delNode = head;
 	Node* prev = nullptr;
 
-	if (delNode == nullptr) {
-		return;
-	}
-	if (tile == nullptr) {
-		return;
-	}
+	if (delNode != nullptr && tile != nullptr) {
 
-	if (tile->equal(head->getTile())) {
-		removeHead();
-	}
-	else {
+		bool found = false;
+		int counter = 0;
 
-		for (int i = 0; i < count; i++) {
-
+		while (counter < count && !found) {
 			if (tile->equal(delNode->getTile())) {
 				found = true;
-				break;
+				if (counter == 0) {
+					removeHead();
+				}
+				else {
+					removeNode(prev, delNode);
+				}
 			}
 			prev = delNode;
 			delNode = delNode->nextNode();
-		}
-
-		if (found) {
-			if (count == 1) {
-				removeHead();
-			}
-			else {
-				removeNode(prev, delNode);
-			}
+			counter++;
 		}
 	}
 }
 void LinkedList::remove(int index) {
 
-	if (index >= count || index < 0) {
-		return;
+	if (index == 0) {
+		removeHead();
 	}
+	else if (index > 0 && index < count) {
+		Node* delNode = getNode(index);
+		Node* prev = getNode(index - 1);
 
-	Node* delNode = getNode(index);
-	Node* prev = getNode(index - 1);
-
-	removeNode(prev, delNode);
+		removeNode(prev, delNode);
+	}
 }
 void LinkedList::removeHead() {
 	removeHeadNode();
@@ -172,12 +160,11 @@ bool LinkedList::contains(Tile* tile) {
 
 	Node* node = head;
 	Tile* checkTile = nullptr;
-	while (node != nullptr) {
+	while (node != nullptr && !found) {
 		checkTile = node->getTile();
 
 		if (tile->equal(checkTile)) {
 			found = true;
-			break;
 		}
 
 		node = node->nextNode();

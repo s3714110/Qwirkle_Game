@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _MENU_
+#define _MENU_
+
 #include "Game.h"
 
 class Menu {
@@ -13,3 +15,4 @@ public:
 	Game* newGame();
 	Game* loadGame();
 };
+#endif

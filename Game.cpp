@@ -1,6 +1,8 @@
+#include <iostream>
+
 #include "Game.h"
 #include "qwirkle_io.h"
-#include <iostream>
+
 
 LinkedList* Game::init_tiles() {
 	LinkedList* _tiles = new LinkedList();
@@ -140,7 +142,6 @@ Tile* Game::getTile(std::string tileString) {
 
 		if ( 0 == tileString.compare(searchTile->toString())) {
 			tile = searchTile;
-			break;
 		}
 	}
 
@@ -177,7 +178,7 @@ void Game::run() {
 void Game::playerMove(Player* player) {
 
 	bool end = false;
-	int counter = 1;
+	int counter = 0;
 
 	while(!end){
 		displayMessage("\n\n" + player->getName() + ", its your turn!\n");
@@ -189,56 +190,63 @@ void Game::playerMove(Player* player) {
 
 		// invalid entry
 		if (move.size() == 0) {
-			continue;
+			displayMessage("Enter \"help\" for list of commands");
 		}
 
-		else if(move.at(0).compare("end") == 0 && counter > 1){
+		else if(move.at(0).compare("end") == 0 && counter > 0){
 			player->addToScore(board->getPoints());
 			end = true;
 		}
 
-		else{
-
+		else {
 			// player doesnt have tile return
 			Tile* tile = getTile(move.at(1));
 
-			if (!player->playerHasTile(tile)) {
-				continue;
-			}
-
-			// Passed all checks
-			// Do Replace
-			if (move.at(0).compare("replace") == 0 && counter < 2) {
-				if(replace(player, tile)) {
-					end = true;
-				}
-			}
-
-			// Do Place (Need a better what of converting user input into row/col value)
-			else if (move.at(0).compare("place") == 0) {
-				std::string _row_ = move.at(2).substr(0, 1);
-				std::string _col_ = move.at(2).substr(1);
-
-				int row = rows.find(_row_)->second;
-				int col = std::stoi(_col_);
+			if (player->hasTile(tile)) {
 				
-				if (place(tile, row, col)) {
-					player->removeFromHand(tile);
+				// Passed all checks
+				// Do Replace
+				if (move.at(0).compare("replace") == 0 && counter < 1) {
+					if (replace(player, tile)) {
+						end = true;
+					}
 				}
 
+				// Do Place (Need a better what of converting user input into row/col value)
+				else if (move.at(0).compare("place") == 0) {
+					std::string _row_ = move.at(2).substr(0, 1);
+					std::string _col_ = move.at(2).substr(1);
+
+					int row = rowStringToIntMap.find(_row_)->second;
+					int col = std::stoi(_col_);
+
+					if (place(tile, row, col)) {
+						player->removeFromHand(tile);
+					}
+
+				}
 			}
 		}
-
-
 		counter++;
 	}
 
 }
 
+/*
+	Insert a new row into the board
+
+	Input:
+		Player* player	- player to replace tile
+		Tile* tile		- tile that is to be replaced
+
+	Note:
+		if row == 0			(new column added at the top of the board)
+		if row == height	(new column added at the bottom of the board)
+*/
 bool Game::replace(Player* player, Tile* tile) {
 	bool status = false;
 
-	if(tilebag->amountTilesLeft() > 0){
+	if(tilebag->amountTilesLeft()){
 		player->removeFromHand(tile);
 		Tile* newTile = tilebag->removeFromBag();
 		player->addToHand(newTile);
@@ -249,11 +257,5 @@ bool Game::replace(Player* player, Tile* tile) {
 }
 
 bool Game::place(Tile* tile, int row, int col) {
-	bool status = false;
-	
-	if (board->placeTile(tile, row, col)) {
-		status = true;
-	}
-
-	return status;
+	return board->placeTile(tile, row, col);
 }

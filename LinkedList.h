@@ -1,4 +1,7 @@
-#pragma once
+//#pragma once
+#ifndef _LINKED_LIST_
+#define _LINKED_LIST_
+
 #include "Tile.h"
 
 // Used to wrap tiles in the linked list
@@ -54,3 +57,4 @@ public:
 
 	int size();		
 };
+#endif

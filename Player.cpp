@@ -26,7 +26,11 @@ void Player::removeFromHand(Tile* tile) {
 	hand->remove(tile);
 }
 
-PlayerHand Player::getPlayerHand(){
+bool Player::hasTile(Tile* tile) {
+	return hand->contains(tile);
+}
+
+LinkedList* Player::getPlayerHand(){
 	return hand;
 }
 
@@ -34,14 +38,3 @@ int Player::tilesInHand(){
 	return hand->size();
 }
 
-bool Player::playerHasTile(Tile* tile) {
-	bool status = false;
-
-	for (int i = 0; i < hand->size(); i++) {
-		if (tile->equal(hand->get(i))) {
-			status = true;
-		}
-	}
-
-	return status;
-}

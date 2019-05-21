@@ -166,7 +166,7 @@ std::string getPlayerName(int playerNum) {
 	return playerName;
 }
 std::vector<std::string> getPlayerMove() {
-	std::cout << "\nType \'Help\' for list of commands\n>";
+	std::cout << "\nEnter \"help\" for list of commands\n>";
 
 	return getUserInput_move();
 }
