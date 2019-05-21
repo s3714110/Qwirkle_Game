@@ -16,59 +16,35 @@ Menu::~Menu() {
 // Run the game
 void Menu::run() {
 
-	bool exit = false;
-
-	while (!exit) {
 
 		displayMenu();
 		int option = getMenuChoice();
 
-		switch (option) {
-
-			// Case for new game
-			case 1: {
+		while (true) {
+			if (option == 1) {
 				Game* game = newGame();
 				displayMessage("\nLets play!\n\n");
 				game->run();
 				delete game;
-				break;
+				exit(EXIT_SUCCESS);
 			}
-
-			// Case for loading a game
-			case 2: {
+			else if (option == 2) {
 				Game* game = loadGame();
-				if (game == nullptr) {
-					displayMessage("\nInvalid File\n\n");
-				}
-				else {
+				if (game != nullptr) {
 					game->run();
 				}
-				// Game* game = loadGame();
-				// displayMessage("\nLets play!\n\n");
-				// game->run();
-				// delete game;
-				// break;
+				delete game;
+				exit(EXIT_SUCCESS);
 			}
-
-			// Case for showing the student information
-			case 3: {
+			else if (option == 3) {
 				displayMessage("\nShowing student info");
-				break;
+				exit(EXIT_SUCCESS);
 			}
-
-			// Case for exiting the game
-			case 4: {
+			else if (option == 4) {
 				displayMessage("\nGoodbye");
-				exit = true;
-				break;
-			}
-
-			// If the user enters an invalid option
-			default: {
-				displayMessage("\nPlease select a valid option");
+				exit(EXIT_SUCCESS);
 			}
 		}
-	}
 }
 
 // Create new game and return it
@@ -94,37 +70,36 @@ Game* Menu::newGame() {
 	}
 
 	// Initialise the board
-	int boardSize;
-	boardSize = getBoardSize();
-	board = new Board(boardSize, boardSize);
+	board = new Board();
 
 	return new Game(board, players, playerCount);
 }
+
  Game* Menu::loadGame() {
 	 Game* game = nullptr;
 
 	 std::string filename = getFilename();
- 	// Filename to store the name of the file received by the player
-	 bool success = false;
+	 // Filename to store the name of the file received by the player
+	 
 	 std::string line;
-	 int counter = 1;
-	 int playercount = 0;
-	 int boardsize = 0;
+	 
 	 std::ifstream saveFile(filename);
 
-	 int currentPlayer = 0;
+	 int playercount = 0;
+	 int boardwidth = 0;
+	 int boardheight = 0;
+	 int currentPlayer = -1;
 	 std::vector<Player*> playersVector;
 	 std::vector<std::pair<std::string, std::pair<int, int>>> boardTiles;
 	 std::vector<std::vector<std::string>> playerHands;
 	 std::vector<std::string> bagTiles;
+
 	 std::cout << "Load File: " << filename << std::endl;
+
+	 
 	 if (saveFile.is_open())
 	 {
 		 std::cout << "Open File" << std::endl;
-		if (std::getline(saveFile, line)) {
-			 playercount = std::stoi(line);
-		 }
-		std::cout << "player count: " << playercount << std::endl;
 
 		 std::regex nametest("[A-Z]+");
 		 std::regex scoretest("[0-9]+");
@@ -134,23 +109,34 @@ Game* Menu::newGame() {
 		 std::regex boardrowtest("([A-Z][ ][ ][|]{1})([ROYGBP ][1-6 ][|])+");
 		 std::smatch m;
 
+		 bool error = false;
+		 while (std::getline(saveFile, line) && !error) {
+			 if (saveFile.peek() == EOF) {
+				 for (int i = 0; i < playersVector.size(); i++) {
+					 if (0 == line.compare(playersVector.at(i)->getName())) {
+						 currentPlayer = i;
+					 }
+				 }
+			 }
+			 else if (std::regex_match(line, m, nametest)) {
+				 std::cout << "get player" << std::endl;
+				 
+				 
+				 playercount++;
+				 playersVector.push_back(new Player(std::to_string(playercount), line));
 
-		 for (int i = 0; i < playercount; i++) {
-			 std::cout << "get player(): " << i << std::endl;
-			 // get first player
-			 int counter = 1;
-			 while (counter < 4) {
+				 int counter = 0;
 				 if (std::getline(saveFile, line)) {
-					 std::cout << "player line: " << line << std::endl;
-					 if (counter == 1 && std::regex_match(line, m, nametest)) {
-						 playersVector.push_back(new Player(std::to_string(playercount + 1), line));
+					 if (std::regex_match(line.begin(), line.end(), scoretest)) {
+						 playersVector.at(playercount - 1)->addToScore(std::stoi(line));
 						 counter++;
 					 }
-					 else if (counter == 2 && std::regex_match(line.begin(), line.end(), scoretest)) {
-						 playersVector.at(i)->addToScore(std::stoi(line));
-						 counter++;
+					 else {
+						 error = true;
 					 }
-					 else if (counter == 3 && std::regex_match(line.begin(), line.end(), tiletest)) {
+				 }
+				 if (std::getline(saveFile, line) && ! error) {
+					 if (std::regex_match(line.begin(), line.end(), tiletest)) {
 						 std::istringstream tiles(line);
 						 std::string tile;
 						 std::vector<std::string> hand;
@@ -161,59 +147,39 @@ Game* Menu::newGame() {
 						 counter++;
 					 }
 					 else {
-						 std::cout << "player error" << counter << std::endl;
-						 return nullptr;
+						 error = true;
 					 }
-				 }
-				 std::cout << "counter: " << counter << std::endl;
+				 }				
 			 }
-		 }
-		 if (std::getline(saveFile, line)) {
-			 std::cout << "board line: " << line << std::endl;
-			 if (std::regex_match(line.begin(), line.end(), boardcolumntest)) {
+			 else if (std::regex_match(line.begin(), line.end(), boardcolumntest)) {
 
-				 line.erase(line.begin(), line.end()-2);
-				 boardsize = std::stoi(line) + 1;
-				 std::cout << "boardsize: " << boardsize << std::endl;
+				 line.erase(line.begin(), line.end() - 2);
+				 boardwidth = std::stoi(line) + 1;
 
 				 std::getline(saveFile, line);
-				 for (int row = 0; row < boardsize; row++) {
-					 std::getline(saveFile, line);
-					 std::cout << "rowline: " << line << std::endl;
-					 if (!std::regex_match(line.begin(), line.end(), boardrowtest)) {
-						 std::cout << "Invalid board row format" << std::endl;
-						 break;
+			 }
+			 else if (std::regex_match(line.begin(), line.end(), boardrowtest)) {				 
+				 int column = -1;
+				 std::istringstream tiles(line);
+				 std::string tile;
+				 while (std::getline(tiles, tile, '|')) {
+					 if (column == -1) {
+						 column++;
 					 }
-					 std::istringstream tiles(line);
-					 std::string tile;
-					 int column = -1;
-					 while (std::getline(tiles, tile, '|')) {
-						 if (column == -1) {
+					 else {
+						 if (tile == "  ") {
 							 column++;
 						 }
 						 else {
-							 if (tile == "  ") {
-								 column++;
-							 }
-							 else {
-								 std::pair<int, int> coord(row, column);
-								 boardTiles.push_back(std::pair<std::string, std::pair<int, int>>(tile, coord));
-								 std::cout << "tile" << tile << "[" << row << "," << column << "]" << std::endl;
-								 column++;
-							 }
+							 std::pair<int, int> coord(boardheight, column);
+							 boardTiles.push_back(std::pair<std::string, std::pair<int, int>>(tile, coord));
+							 column++;
 						 }
 					 }
 				 }
+				 boardheight++;
 			 }
-			 else {
-				 std::cout << "Invalid board format" << std::endl;
-				 return nullptr;
-			 }
-		 }
-
-		 if (std::getline(saveFile, line)) {
-			 std::cout << "bag: " << line << std::endl;
-			 if (std::regex_match(line.begin(), line.end(), tilebagtest)) {
+			 else if(std::regex_match(line.begin(), line.end(), tilebagtest)) {
 				 std::istringstream tiles(line);
 				 std::string tile;
 				 while (std::getline(tiles, tile, ',')) {
@@ -221,70 +187,53 @@ Game* Menu::newGame() {
 				 }
 			 }
 			 else {
-				 std::cout << "Invalid tile bag" << std::endl;
-				 return nullptr;
+				 error = true;
 			 }
-		 }
 
-		 if (std::getline(saveFile, line)) {
-			 bool found = false;
-			 for (int i = 0; i < playersVector.size(); i++) {
-				 if (line == playersVector.at(i)->getName()) {
-					 currentPlayer = i;
-					 found = true;
-					 success = true;
-				 }
-
-				 if (found == false) {
-					 std::cout << "Current player can't be found" << std::endl;
-					 return nullptr;
-				 }
-			 }
-		 }
-
-	 
+		 }		 
 		 saveFile.close();
-		 Board* board = new Board(boardsize, boardsize);
-		 Player** players = new Player * [playersVector.size()];
-		 for (int i = 0; i < playersVector.size(); i++) {
-			 Player* player = playersVector.at(i);
-			 players[i] = player;
-		 }
-		 LinkedList* tilebagList = new LinkedList();
-		 TileBag* tilebag = new TileBag(tilebagList);
-		 game = new Game(board, players, playercount, tilebag, currentPlayer);
 
-		 //initialise board
-		 std::cout << "BoardTiles: " << std::endl;
-		 for (int i = 0; i < boardTiles.size(); i++) {
-			 std::pair<std::string, std::pair<int, int>> boardTile = boardTiles.at(i);
-			 std::cout << "board tiles[" << i << "]: " << boardTile.first << std::endl;
-			 int row = boardTile.second.first;
-			 int col = boardTile.second.second;
-			 std::cout << "tile" << boardTile.first << "[" << row << "," << col << "]" << std::endl;
-			 board->setTile(game->getTile(boardTile.first), row, col);
-			 
-		 }
+		 if (!error) {
+			 Board* board = new Board(boardheight, boardwidth);
+			 Player** players = new Player * [playersVector.size()];
+			 for (int i = 0; i < playersVector.size(); i++) {
+				 Player* player = playersVector.at(i);
+				 players[i] = player;
+			 }
+			 LinkedList* tilebagList = new LinkedList();
+			 TileBag* tilebag = new TileBag(tilebagList);
+			 game = new Game(board, players, playercount, tilebag, currentPlayer);
 
-		 //initialise player hands
-		 for (int i = 0; i < playerHands.size(); i++) {
-			 std::vector<std::string> playerHand = playerHands.at(i);
-			 Player* player = players[i];
-			 for (int j = 0; j < playerHand.size(); j++) {
-				 std::cout << "player Hand [" << j << "]: " << playerHand.at(j) << std::endl;
-				 player->addToHand(game->getTile(playerHand.at(j)));
+			 //initialise board
+			 for (int i = 0; i < boardTiles.size(); i++) {
+				std::pair<std::string, std::pair<int, int>> boardTile = boardTiles.at(i);
+				int row = boardTile.second.first;
+				int col = boardTile.second.second;
+				
+				board->setTile(game->getTile(boardTile.first), row, col);
+
+			 }
+
+			 //initialise player hands
+			 for (int i = 0; i < playerHands.size(); i++) {
+				 std::vector<std::string> playerHand = playerHands.at(i);
+				 Player* player = players[i];
+				 for (int j = 0; j < playerHand.size(); j++) {
+					 player->addToHand(game->getTile(playerHand.at(j)));
+				 }
+			 }
+
+			 // intialise bag
+			 for (int i = 0; i < bagTiles.size(); i++) {
+				 tilebagList->add(game->getTile(bagTiles.at(i)));
 			 }
 		 }
-
-		 // intialise bag
-		 for (int i = 0; i < bagTiles.size(); i++) {
-			 std::cout << "bag Hand [" << i << "]: " << bagTiles.at(i) << std::endl;
-			 tilebagList->add(game->getTile(bagTiles.at(i)));
+		 else {
+			 displayMessage("Save File Corrupted");
 		 }
-
 	 }
 	 else {
-		 std::cout << "Unable to open save file" << std::endl;		 
+		displayMessage( "Save File Missing" );
 	 }
 	 return game;
  }

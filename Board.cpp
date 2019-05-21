@@ -1,24 +1,30 @@
 #include "Board.h"
 #include <iostream>
+#include <vector>
 
 // Cells are empty when created
-Cell::Cell(ROW row, COLUMN col) {
-	Cell::row = row;
-	Cell::col = col;
+Cell::Cell(int row, int col) {
+	this->row = row;
+	this->col = col;
 	tile = nullptr;
 }
 
-ROW Cell::getRow() {
+int Cell::getRow() {
 	return row;
 }
-COLUMN Cell::getColumn() {
+int Cell::getColumn() {
 	return col;
 }
 Tile* Cell::getTile() {
 	return tile;
 }
+
+void Cell::update(int row, int col) {
+	this->row = row;
+	this->col = col;
+}
 void Cell::setTile(Tile* tile) {
-	Cell::tile = tile;
+	this->tile = tile;
 }
 bool Cell::isEmpty() {
 	if (tile == nullptr) {
@@ -28,19 +34,38 @@ bool Cell::isEmpty() {
 		return false;
 	}
 }
+bool Cell::equal(Cell* cell) {
+	bool equal = false;
+	if (col == cell->getColumn() && row == cell->getRow()) {
+		equal = true;
+	}
+	return equal;
+}
 
 // Create the board with empty cells
+Board::Board() {
+	height = _INIT_HEIGHT_;
+	width = _INIT_WIDTH_;
+	empty = true;
+	for (int i = 0; i < height; i++) {
+		std::vector<Cell*> cellRow(width);
+		for (int j = 0; j < width; j++) {
+			cellRow[j] = new Cell(i, j);
+		}
+		board.push_back(cellRow);
+	}
+}
 Board::Board(int height, int width) {
 	this->height = height;
 	this->width = width;
 	empty = true;
 
-	board = new CellPtr*[height];
 	for (int i = 0; i < height; i++) {
-		board[i] = new CellPtr[width];
+		std::vector<Cell*> cellRow(width);
 		for (int j = 0; j < width; j++) {
-			board[i][j] = new Cell(static_cast<ROW>(i), static_cast<COLUMN>(j));
+			cellRow[j] = new Cell(i, j);
 		}
+		board.push_back(cellRow);
 	}
 }
 
@@ -48,13 +73,13 @@ Board::Board(int height, int width) {
 // Tile objects are not destroyed
 Board::~Board() {
 
-	for (int i = 0; i < height; i++) {
-		for (int j = 0; j < width; j++) {
+	for (int i = 0; i < board.size(); i++) {
+		for (int j = 0; j < board[i].size(); j++) {
 			delete board[i][j];
 		}
-		delete board[i];
 	}
 }
+
 
 int Board::getHeight() {
 	return height;
@@ -62,7 +87,7 @@ int Board::getHeight() {
 int Board::getWidth() {
 	return width;
 }
-CellPtr Board::getCell(int row, int col) {
+Cell* Board::getCell(int row, int col) {
 	return board[row][col];
 }
 
@@ -70,19 +95,31 @@ void Board::setTile(Tile* tile, int row, int col) {
 	board[row][col]->setTile(tile);
 }
 // Places tile on the board at position (row, col)
-bool Board::placeTile(Tile* tile, int row, int col, int& points) {
+bool Board::placeTile(Tile* tile, int row, int col) {
 
 	bool placeTile = false;
-	placeTile = isValidMove(tile, row, col);
 
-
-	if (placeTile) {
+	if (validMove(tile, row, col)) {
 		board[row][col]->setTile(tile);
-		points = getPoints(tile, row, col);
 
+		playerMoves.push_back(board[row][col]);
 		// if board was empty need to update 'empty' variable
 		if (empty) {
 			empty = false;
+		}
+		
+		// check if board needs to be expanded
+		if (row == 0) {
+			insertRow(row);
+		}
+		else if (row == width - 1) {
+			insertRow(width);
+		}
+		if (col == 0) {
+			insertColumn(col);
+		}
+		else if (col == height - 1) {
+			insertColumn(height);
 		}
 	}
 
@@ -92,7 +129,7 @@ bool Board::placeTile(Tile* tile, int row, int col, int& points) {
 // Only checks that the row and col are within the dimensions
 // and cell is not empty
 // Need to add game rules
-bool Board::isValidMove(Tile* tile, int row, int col) {
+bool Board::validMove(Tile* tile, int row, int col) {
 	bool isValid = false;
 
 	if (row >= height || row < 0) {
@@ -105,6 +142,9 @@ bool Board::isValidMove(Tile* tile, int row, int col) {
 		isValid = false;
 	}
 	else if (!checkRow(row, col, tile) && !checkColumn(row, col, tile)) {
+		isValid = false;
+	}
+	else if (!checkPlayerMoves(row,col)) {
 		isValid = false;
 	}
 	else {
@@ -167,6 +207,20 @@ bool Board::checkColumn(int row, int col, Tile* tile) {
 
 	return valid;
 }
+bool Board::checkPlayerMoves(int row, int col) {
+	bool valid = true;
+
+	if (!playerMoves.empty()) {
+		for (int i = 0; i < playerMoves.size(); i++) {
+			if (row != playerMoves.at(i)->getRow() && col != playerMoves.at(i)->getColumn()) {
+				valid = false;
+			}
+		}
+	}
+
+	return valid;
+}
+
 
 bool Board::colorMatch(LinkedList* tiles, Tile* tile) {
 	bool valid = true;
@@ -270,44 +324,139 @@ LinkedList* Board::getColumn(int row, int col) {
 			}
 
 			addRow++;
-			cell = board[addRow + 1][col];
+			cell = board[addRow][col];
 		}
 	}
 
 	return tileColumn;
 }
 
-int Board::getPoints(Tile* tile, int row, int col) {
+int Board::getPoints() {
 
 	int points = 0;
 
-	LinkedList* tileRow = getRow(row, col);
-	LinkedList* tileColumn = getColumn(row, col);
+	std::vector<int> countedRows;
+	std::vector<int> countedColumns;
 
-	if (tileRow->size() > 0) {
-		tileRow->add(tile);
+	for (int i = 0; i < playerMoves.size(); i++) {
+		bool countRow = true;
+		bool countColumn = true;
 
-		points += tileRow->size();
+		Cell* playerMove = playerMoves.at(i);
+		for (int j = 0; j < countedRows.size(); j++) {
+			if (playerMove->getRow() == countedRows.at(j)) {
+				countRow = false;
+			}
+		}
+		for (int j = 0; j < countedColumns.size(); j++) {
+			if (playerMove->getColumn() == countedColumns.at(j)) {
+				countColumn = false;
+			}
+		}
 
-		// if qwirkle
-		if (tileRow->size() == 6) {
-			points += 6;
+		
+		if (countRow) {
+			int rowPoint = rowPoints(playerMove);
+			points += rowPoint;
+			countedRows.push_back(playerMove->getRow());
+					//points += rowPoints(playerMove);
+		}
+		if (countColumn) {
+			int colPoint = columnPoints(playerMove);
+			points += colPoint;
+			countedColumns.push_back(playerMove->getColumn());
+			//points += columnPoints(playerMove);
 		}
 	}
 
-	if (tileColumn->size() > 0) {
-		tileColumn->add(tile);
-		points += tileColumn->size();
-
-		// if qwirkle
-		if (tileColumn->size() == 6) {
-			points += 6;
-		}
-	}
-
-
-	delete tileRow;
-	delete tileColumn;
-
+	playerMoves.clear();
 	return points;
 }
+
+int Board::rowPoints(Cell* playerMove) {
+	int count = 0;
+	
+	int row = playerMove->getRow();
+	int col = playerMove->getColumn();
+
+	LinkedList* tileRow = getRow(row, col);
+	count = tileRow->size();
+
+	// if the row isnt empty count this tile as well
+	if (count > 0) {
+		count++;
+	}
+	if (count == qwirkle) {
+		count += qwirkle_bonus;
+	}
+
+	delete tileRow;
+
+	return count;
+}
+int Board::columnPoints(Cell* playerMove) {
+	int count = 0;
+
+	int row = playerMove->getRow();
+	int col = playerMove->getColumn();
+	LinkedList* tileColumn = getColumn(row, col);
+	count = tileColumn->size();
+
+	// if the column isnt empty count this tile as well
+	if (count > 0) {
+		count++;
+	}
+	if (count == qwirkle) {
+		count += qwirkle_bonus;
+	}
+
+	delete tileColumn;
+
+	return count;
+}
+
+
+void Board::insertRow(int row) {
+
+	std::vector<Cell*> cellRow(width);
+	for (int i = 0; i < width; i++) {
+		cellRow[i] = new Cell(row, i);
+	}
+
+	if (row == 0) {
+		board.insert(board.begin(), cellRow);
+		updateCells();
+		height++;
+	}
+	else if (row == height) {
+		board.push_back(cellRow);
+		height++;
+	}
+	
+}
+
+void Board::insertColumn(int col) {
+
+	if (col == 0) {
+		for (int i = 0; i < height; i++) {
+			board[i].insert(board[i].begin(), new Cell(i, col));
+		}
+		updateCells();
+		width++;
+	}
+	else if (col == width) {
+		for (int i = 0; i < height; i++) {
+			board[i].push_back(new Cell(i, col));
+		}
+		width++;
+	}	
+}
+
+void Board::updateCells() {
+	for (int i = 0; i < board.size(); i++) {
+		for (int j = 0; j < board[i].size(); j++) {
+			board[i][j]->update(i, j);
+		}
+	}
+}
+

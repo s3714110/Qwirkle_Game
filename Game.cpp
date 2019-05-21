@@ -193,6 +193,7 @@ void Game::playerMove(Player* player) {
 		}
 
 		else if(move.at(0).compare("end") == 0 && counter > 1){
+			player->addToScore(board->getPoints());
 			end = true;
 		}
 
@@ -220,7 +221,10 @@ void Game::playerMove(Player* player) {
 
 				int row = rows.find(_row_)->second;
 				int col = std::stoi(_col_);
-				place(player, tile, row, col);
+				
+				if (place(tile, row, col)) {
+					player->removeFromHand(tile);
+				}
 
 			}
 		}
@@ -244,14 +248,10 @@ bool Game::replace(Player* player, Tile* tile) {
 	return status;
 }
 
-bool Game::place(Player* player, Tile* tile, int row, int col) {
+bool Game::place(Tile* tile, int row, int col) {
 	bool status = false;
-
-	int points = 0;
-
-	if (board->placeTile(tile, row, col, points)) {
-		player->removeFromHand(tile);
-		player->addToScore(points);
+	
+	if (board->placeTile(tile, row, col)) {
 		status = true;
 	}
 

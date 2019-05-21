@@ -30,7 +30,7 @@ public:
 	LinkedList* getTiles();
 	Tile* getTile(std::string tileString);
 	bool replace(Player* player, Tile* tile);
-	bool place(Player* player, Tile* tile, int row, int col);
+	bool place(Tile* tile, int row, int col);
 	void playerMove(Player* player);
 
 };

@@ -18,7 +18,6 @@ int getMenuChoice();
 std::string getFilename();
 int getPlayerCount();
 std::string getPlayerName(int playerNum);
-int getBoardSize();
 std::vector<std::string> getPlayerMove();
 
 int getUserInput_int();

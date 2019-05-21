@@ -44,7 +44,7 @@ void displayBoard(Board* board) {
 	for (int i = 0; i < height; i++) {
 		board_ss << char('A' + i) << " |";
 		for (int j = 0; j < width; j++) {
-			CellPtr cell = board->getCell(i, j);
+			Cell* cell = board->getCell(i, j);			
 			if (cell->getTile() == nullptr) {
 				board_ss << "  ";
 			}
@@ -165,33 +165,29 @@ std::string getPlayerName(int playerNum) {
 
 	return playerName;
 }
-
-int getBoardSize() {
-	int boardSize = -1;
-
-	displayMessage("\nEnter a board size (9-26)");
-	do {
-		boardSize = getUserInput_int();
-		if (boardSize < 9 || boardSize > 26) {
-			displayMessage("\nInvalid Board Size");
-		}
-	} while (boardSize < 9 || boardSize > 26);
-
-	return boardSize;
-}
 std::vector<std::string> getPlayerMove() {
-	std::cout << "\n>";
+	std::cout << "\nType \'Help\' for list of commands\n>";
 
 	return getUserInput_move();
+}
+
+std::string getUserInput_string() {
+	std::string value = "";
+
+	std::string input;
+	if (!std::getline(std::cin, input)) {
+		exit(EXIT_SUCCESS);
+	}
+	value = input;
+
+
+	return value;
 }
 
 int getUserInput_int() {
 	int value = -1;
 
-	std::string input;
-	if (!getline(std::cin, input)) {
-		return value;
-	}
+	std::string input = getUserInput_string();
 
 	std::regex _regex("^[0-9]+$");
 	std::smatch m;
@@ -203,26 +199,10 @@ int getUserInput_int() {
 	return value;
 }
 
-std::string getUserInput_string() {
-	std::string value = "";
-
-	std::string input;
-	if (!getline(std::cin, input)) {
-		return value;
-	}
-
-	value = input;
-
-	return value;
-}
-
 int getUserInput_menu() {
 	int value = -1;
 
-	std::string input;
-	if (!getline(std::cin, input)) {
-		return value;
-	}
+	std::string input = getUserInput_string();
 
 	std::regex _regex("^[1-4]$");
 	std::smatch m;
@@ -234,10 +214,7 @@ int getUserInput_menu() {
 	return value;
 }
 
-/*
-	NEED TO IMPLEMENT
 
-*/
 std::string getUserInput_filename() {
 	return getUserInput_string();
 }
@@ -245,11 +222,7 @@ std::string getUserInput_filename() {
 std::string getUserInput_playername() {
 	std::string value = "";
 
-	std::string input;
-
-	if (!getline(std::cin, input)) {
-		return value;
-	}
+	std::string input = getUserInput_string();
 
 	std::regex _regex("^[A-Z]*$");
 	std::smatch m;
@@ -265,10 +238,7 @@ std::string getUserInput_playername() {
 std::string getUserInput_tile() {
 	std::string value = "";
 
-	std::string input;
-	if (!getline(std::cin, input)) {
-		return value;
-	}
+	std::string input = getUserInput_string();
 
 	std::regex _regex("^[ROYGBProygbp][123456]$");
 	std::smatch m;
@@ -284,15 +254,12 @@ std::string getUserInput_tile() {
 std::vector<std::string> getUserInput_move() {
 	std::vector<std::string> move;
 
-	std::string input;
-	if (!getline(std::cin, input)) {
-		return move;
-	}
+	std::string input = getUserInput_string();
 
 	std::regex place_regex("^place [ROYGBP][1-6] at [A-Z][0-9][0-9]?$");
 	std::regex replace_regex("^replace [ROYGBP][1-6]$");
-	std::regex help_regex("help");
-	std::regex end_regex("end");
+	std::regex help_regex("^help$");
+	std::regex end_regex("^end$");
 	std::smatch m;
 
 	// get place

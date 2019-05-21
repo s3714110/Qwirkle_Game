@@ -2,9 +2,15 @@
 #include "Tile.h"
 #include "LinkedList.h"
 #include <map>
+#include <vector>
 
 
 #define _SPACE_ " "
+#define _MAX_HEIGHT_ 26
+#define _MAX_WIDTH_ 26
+
+#define _INIT_HEIGHT_ 3
+#define _INIT_WIDTH_ 3
 
 // Row
 #define _ROW_A_ "A"
@@ -33,34 +39,6 @@
 #define _ROW_X_ "X"
 #define _ROW_Y_ "Y"
 #define _ROW_Z_ "Z"
-
-// Column
-#define _COL_0_ "0"
-#define _COL_1_ "1"
-#define _COL_2_ "2"
-#define _COL_3_ "3"
-#define _COL_4_ "4"
-#define _COL_5_ "5"
-#define _COL_6_ "6"
-#define _COL_7_ "7"
-#define _COL_8_ "8"
-#define _COL_9_ "9"
-#define _COL_10_ "10"
-#define _COL_11_ "11"
-#define _COL_12_ "12"
-#define _COL_13_ "13"
-#define _COL_14_ "14"
-#define _COL_15_ "15"
-#define _COL_16_ "16"
-#define _COL_17_ "17"
-#define _COL_18_ "18"
-#define _COL_19_ "19"
-#define _COL_20_ "20"
-#define _COL_21_ "21"
-#define _COL_22_ "22"
-#define _COL_23_ "23"
-#define _COL_24_ "24"
-#define _COL_25_ "25"
 
 
 const std::map<std::string, int> rows = {
@@ -91,146 +69,84 @@ const std::map<std::string, int> rows = {
   { _ROW_Y_, 24 },
   { _ROW_Z_, 25 }
 };
-const std::map<int, std::string> columns = {
-  { 0, _COL_0_ },
-  { 1, _COL_1_ },
-  { 2, _COL_2_ },
-  { 3, _COL_3_ },
-  { 4, _COL_4_ },
-  { 5, _COL_5_ },
-  { 6, _COL_6_ },
-  { 7, _COL_7_ },
-  { 8, _COL_8_ },
-  { 9, _COL_9_ },
-  { 10, _COL_10_ },
-  { 11, _COL_11_ },
-  { 12, _COL_12_ },
-  { 13, _COL_13_ },
-  { 14, _COL_14_ },
-  { 15, _COL_15_ },
-  { 16, _COL_16_ },
-  { 17, _COL_17_ },
-  { 18, _COL_18_ },
-  { 19, _COL_19_ },
-  { 20, _COL_20_ },
-  { 21, _COL_21_ },
-  { 22, _COL_22_ },
-  { 23, _COL_23_ },
-  { 24, _COL_24_ },
-  { 25, _COL_25_ }
-};
 
 
 
-typedef enum _ROW {
-	ROW_A,
-	ROW_B,
-	ROW_C,
-	ROW_D,
-	ROW_E,
-	ROW_F,
-	ROW_G,
-	ROW_H,
-	ROW_I,
-	ROW_J,
-	ROW_K,
-	ROW_L,
-	ROW_M,
-	ROW_N,
-	ROW_O,
-	ROW_P,
-	ROW_Q,
-	ROW_R,
-	ROW_S,
-	ROW_T,
-	ROW_U,
-	ROW_V,
-	ROW_W,
-	ROW_X,
-	ROW_Y,
-	ROW_Z,
-} ROW;
-
-typedef enum _COLUMN {
-	COL_0,
-	COL_1,
-	COL_2,
-	COL_3,
-	COL_4,
-	COL_5,
-	COL_6,
-	COL_7,
-	COL_8,
-	COL_9,
-	COL_10,
-	COL_11,
-	COL_12,
-	COL_13,
-	COL_14,
-	COL_15,
-	COL_16,
-	COL_17,
-	COL_18,
-	COL_19,
-	COL_20,
-	COL_21,
-	COL_22,
-	COL_23,
-	COL_24,
-	COL_25
-} COLUMN;
 
 
 // contains cell information
 // tile is a pointer to a tile
 class Cell {
 private:
-	ROW row;
-	COLUMN col;
+	int row;
+	int col;
 	Tile* tile;
 
 public:
-	Cell(ROW row, COLUMN col);
+	Cell(int row, int col);
 
-	ROW getRow();
-	COLUMN getColumn();
+	int getRow();
+	int getColumn();
 
 	Tile* getTile();
 	void setTile(Tile* tile);
 	bool isEmpty();
+	bool equal(Cell* cell);
+
+	void update(int row, int col);
 };
 
 // This type is used to make the board
 // each board element points to a cell
-typedef Cell* CellPtr;
+
 
 class Board {
 private:
-	CellPtr** board; // board[row][col]
+	static const int qwirkle = 6;
+	static const int qwirkle_bonus = 6;
+
+	static const int initHeight = 3;
+	static const int initWidth = 3;
+	static const int maxHeight = 26;
+	static const int maxWidth = 26;
+
+
+	std::vector <std::vector<Cell*>> board; // board[row][col]
 	int height;
 	int width;
 	bool empty; // board is empty
+	std::vector<Cell*> playerMoves;
 
 	bool checkRow(int row, int col, Tile* tile);
 	bool checkColumn(int row, int col, Tile* tile);
-
-	bool colorMatch(LinkedList* tiles, Tile* tile);
-	bool shapeMatch(LinkedList* tiles, Tile* tile);
+	bool checkPlayerMoves(int row, int col);
 
 	LinkedList* getRow(int row, int col);
 	LinkedList* getColumn(int row, int col);
 
-	int getPoints(Tile* tile, int row, int col);
-
+	int rowPoints(Cell* playerMove);
+	int columnPoints(Cell* playerMove);
+	
 public:
-	Board(int row, int col);
+	Board();
+	Board(int height, int width);
 	~Board();
 
 	int getHeight();
 	int getWidth();
-	CellPtr getCell(int row, int col);
+	Cell* getCell(int row, int col);
 
 	void setTile(Tile* tile, int row, int col);
-	bool placeTile(Tile* tile, int row, int col, int& points);
-	bool isValidMove(Tile* tile, int row, int col);
+	bool placeTile(Tile* tile, int row, int col);
+	bool validMove(Tile* tile, int row, int col);
+	int getPoints();
+
+
+	bool colorMatch(LinkedList* tiles, Tile* tile);
+	bool shapeMatch(LinkedList* tiles, Tile* tile);
+
+	void insertRow(int row);
+	void insertColumn(int col);
+	void updateCells();
+
 };
