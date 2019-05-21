@@ -104,8 +104,8 @@ Game* Menu::newGame() {
 
 		 std::regex nametest("[A-Z]+");
 		 std::regex scoretest("[0-9]+");
-		 std::regex tiletest("([ROYGBP][1-6],){5}[ROYGBP][1-6]{1}");
-		 std::regex tilebagtest("([ROYGBP][1-6],)*[ROYGBP][1-6]{1}$");
+		 std::regex tiletest("([ROYGBP][1-6],)*[ROYGBP][1-6]*);
+		 std::regex tilebagtest("([ROYGBP][1-6],)*[ROYGBP][1-6]*$");
 		 std::regex boardcolumntest("[0-9 ]+");
 		 std::regex boardrowtest("([A-Z][ ][ ][|]{1})([ROYGBP ][1-6 ][|])+");
 		 std::smatch m;
