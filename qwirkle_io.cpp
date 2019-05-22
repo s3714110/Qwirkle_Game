@@ -44,7 +44,7 @@ void displayBoard(Board* board) {
 	for (int i = 0; i < height; i++) {
 		board_ss << char('A' + i) << " |";
 		for (int j = 0; j < width; j++) {
-			Cell* cell = board->getCell(i, j);			
+			Cell* cell = board->getCell(i, j);
 			if (cell->getTile() == nullptr) {
 				board_ss << "  ";
 			}
@@ -101,7 +101,8 @@ void displayHelp(){
 	std::cout << "  Clover|6\n" << std::endl;
 	std::cout << "To place a tile, enter:" << std::endl;
 	std::cout << "place .. at .." << std::endl;
-	std::cout << "For example, place G5 at B3\n" << std::endl;
+	std::cout << "For example, place G5 at B3" << std::endl;
+	std::cout << "After placing tiles, type end to end your turn\n" << std::endl;
 	std::cout << "To replace a tile in your hand, enter:" << std::endl;
 	std::cout << "replace .." << std::endl;
 	std::cout << "For example, replace G5\n" << std::endl;
@@ -300,7 +301,7 @@ std::vector<std::string> getUserInput_move() {
 		displayHelp();
 	}
 
-	//get save file name 
+	//get save file name
 	else if(std::regex_match(input, m, save_regex)){
 		std::size_t filenamepos = input.find_first_of(" ") + 1;
 
