@@ -98,3 +98,56 @@ std::string Tile::toString() {
 
 	return tile_ss.str();
 }
+
+std::string Tile::toStringUnicode() {
+	std::stringstream tile_ss;
+	if (color == RED){
+		tile_ss << REDCOLOR;
+	}
+
+	else if(color == ORANGE){
+		tile_ss << ORANGECOLOR;
+	}
+	
+	else if(color == YELLOW){
+		tile_ss << YELLOWCOLOR;
+	}
+
+	else if(color == GREEN){
+		tile_ss << GREENCOLOR;
+	}
+
+	else if(color == BLUE){
+		tile_ss << BLUECOLOR;
+	}
+	
+	else if(color == PURPLE){
+		tile_ss << PURPLECOLOR;
+	}
+
+	if (shape == CIRCLE){
+		tile_ss << CIRCLESHAPE << RESETCOLOR;
+	}
+
+	else if(shape == FOUR_STAR){
+		tile_ss << FOURSTARSHAPE << RESETCOLOR;
+	}
+
+	else if(shape == DIAMOND){
+		tile_ss << DIAMONDSHAPE << RESETCOLOR;
+	}
+
+	else if(shape == SQUARE){
+		tile_ss << SQUARESHAPE << RESETCOLOR;
+	}
+
+	else if(shape == SIX_STAR){
+		tile_ss << SIXSTARSHAPE << RESETCOLOR;
+	}
+
+	else if(shape == CLOVER){
+		tile_ss << CLOVERSHAPE << RESETCOLOR;
+	}
+
+	return tile_ss.str();
+}

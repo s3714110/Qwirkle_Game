@@ -49,7 +49,7 @@ void displayBoard(Board* board) {
 				board_ss << "  ";
 			}
 			else {
-				board_ss << cell->getTile()->toString();
+				board_ss << cell->getTile()->toStringUnicode();
 			}
 			board_ss << "|";
 		}
@@ -76,7 +76,7 @@ void displayPlayerHand(Player* player) {
 		if (i != 0) {
 			std::cout << ", ";
 		}
-		std::cout << tile->toString() ;
+		std::cout << tile->toStringUnicode() ;
 	}
 	std::cout << std::endl;
 }
@@ -84,6 +84,21 @@ void displayPlayerHand(Player* player) {
 void displayHelp(){
 	std::cout << "\n\nHelp\n" << std::endl;
 	std::cout << "-----------------------------\n" << std::endl;
+	std::cout << "  Tile code\n" << std::endl;
+	std::cout << "  Color |Color code\n" << std::endl;
+	std::cout << "  Red   |R" << std::endl;
+	std::cout << "  Orange|O" << std::endl;
+	std::cout << "  Yellow|Y" << std::endl;
+	std::cout << "  Green |G	" << std::endl;
+	std::cout << "  Blue  |B	" << std::endl;
+	std::cout << "  Purple|P\n" << std::endl;
+	std::cout << "  Shape |Shape code\n" << std::endl;
+	std::cout << "  Circle|1" << std::endl;
+	std::cout << "  4-Star|2" << std::endl;
+	std::cout << " Diamond|3" << std::endl;
+	std::cout << "  Square|4" << std::endl;
+	std::cout << "  6-Star|5" << std::endl;
+	std::cout << "  Clover|6\n" << std::endl;
 	std::cout << "To place a tile, enter:" << std::endl;
 	std::cout << "place .. at .." << std::endl;
 	std::cout << "For example, place G5 at B3\n" << std::endl;
@@ -258,6 +273,7 @@ std::vector<std::string> getUserInput_move() {
 
 	std::regex place_regex("^place [ROYGBP][1-6] at [A-Z][0-9][0-9]?$");
 	std::regex replace_regex("^replace [ROYGBP][1-6]$");
+	std::regex save_regex("^save [A-Za-z0-9]+$");
 	std::regex help_regex("^help$");
 	std::regex end_regex("^end$");
 	std::smatch m;
@@ -284,6 +300,13 @@ std::vector<std::string> getUserInput_move() {
 		displayHelp();
 	}
 
+	//get save file name 
+	else if(std::regex_match(input, m, save_regex)){
+		std::size_t filenamepos = input.find_first_of(" ") + 1;
+
+		move.push_back("save");
+		move.push_back(input.substr(filenamepos));
+	}
 	// get end
 	else if(std::regex_match(input, m, end_regex)){
 		move.push_back("end");

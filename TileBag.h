@@ -17,5 +17,6 @@ public:
 	void addToBag(Tile* tile);
 	LinkedList* shuffleBag(LinkedList* unshuffledList);
 	int amountTilesLeft();
+	LinkedList* getTiles();
 };
 #endif

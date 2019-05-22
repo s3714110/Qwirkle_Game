@@ -20,6 +20,23 @@
 #define _SIX_STAR_ 5
 #define _CLOVER_ 6
 
+// Color escape codes
+#define RESETCOLOR   "\033[0m"
+#define REDCOLOR     "\033[31m"      
+#define ORANGECOLOR     "\033[1m\033[31m"      
+#define YELLOWCOLOR  "\033[33m"      
+#define GREENCOLOR   "\033[32m"     
+#define BLUECOLOR    "\033[34m"      
+#define PURPLECOLOR "\033[35m"
+
+// Shape unicode
+#define CIRCLESHAPE "\xE2\x9A\xAB"
+#define FOURSTARSHAPE "\342\234\246 "
+#define DIAMONDSHAPE "\xF0\x9F\x94\xB6"
+#define SQUARESHAPE "\xE2\x97\xBC "
+#define SIXSTARSHAPE "\u2736 "
+#define CLOVERSHAPE "\xF0\x9F\x8D\x80"
+
 
 typedef enum _COLOR {
 	RED,
@@ -52,5 +69,6 @@ public:
 	bool sameColor(Tile* tile);
 	bool sameShape(Tile* tile);
 	std::string toString();
+	std::string toStringUnicode();
 };
 #endif

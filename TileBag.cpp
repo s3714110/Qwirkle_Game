@@ -48,3 +48,9 @@ LinkedList* TileBag::shuffleBag(LinkedList* unshuffledList){
 int TileBag::amountTilesLeft(){
 	return shuffledList->size();
 }
+
+LinkedList* TileBag::getTiles() {
+	return shuffledList;
+}
+
+

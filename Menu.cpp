@@ -38,7 +38,18 @@ void Menu::run() {
 				}
 			}
 			else if (option == 3) {
-				displayMessage("\nShowing student info");
+				displayMessage("\n-------------------------------------\n");
+				displayMessage("Name: Nicholas Madew\n");
+				displayMessage("Student ID: s3378373\n");
+				displayMessage("Email: s3378373@student.rmit.edu.au\n\n");
+				displayMessage("Name: Quinn Boukouvalas\n");
+				displayMessage("Student ID: s3605398\n");
+				displayMessage("Email: s3605398@student.rmit.edu.au\n\n");
+				displayMessage("Name: Lam Hoang Tran\n");
+				displayMessage("Student ID: s3714110\n");
+				displayMessage("Email: s3714110@student.rmit.edu.au\n");
+				displayMessage("\n------------------------------------\n");
+				
 				exit(EXIT_SUCCESS);
 			}
 			else if (option == 4) {
@@ -120,9 +131,7 @@ Game* Menu::newGame() {
 				 }
 			 }
 			 else if (std::regex_match(line, m, nametest)) {
-				 std::cout << "get player" << std::endl;
-
-
+				 
 				 playercount++;
 				 playersVector.push_back(new Player(std::to_string(playercount), line));
 

@@ -49,6 +49,7 @@ private:
 	LinkedList* init_tiles();
 	void fillPlayerHand(Player* player);
 	void init_playerhand();
+  Player* currentPlayer;
 
 public:
 	Game(Board* board, Player** players, int playerCount);

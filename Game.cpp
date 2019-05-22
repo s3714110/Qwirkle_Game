@@ -1,7 +1,9 @@
 #include <iostream>
+#include <fstream>
 
 #include "Game.h"
 #include "qwirkle_io.h"
+
 
 
 LinkedList* Game::init_tiles() {
@@ -151,7 +153,7 @@ Tile* Game::getTile(std::string tileString) {
 // Game play starts
 void Game::run() {
 	bool endgame = false;
-	Player* currentPlayer = nullptr;
+	currentPlayer = nullptr;
 	
 	while (endgame == false) {
 		currentPlayer = players[playerTurn];
@@ -196,6 +198,70 @@ void Game::playerMove(Player* player) {
 		else if(move.at(0).compare("end") == 0 && counter > 0){
 			player->addToScore(board->getPoints());
 			end = true;
+		}
+
+		else if (move.at(0).compare("save") == 0)
+		{
+			std::ofstream savefile(move.at(1));
+			if (savefile.is_open())
+			{
+				
+				for (int i = 0; i < playerCount; i++)
+				{
+					savefile << players[i]->getName() << "\n";
+					savefile << players[i]->getScore() << "\n";
+					for (int k = 0; k < players[i]->getPlayerHand()->size() - 1; k++)
+					{
+						savefile << players[i]->getPlayerHand()->get(k)->toString() << ",";
+					}
+					savefile << players[i]->getPlayerHand()->getTail()->toString() << "\n";
+				}
+
+				savefile << "    ";
+				for (int j = 0; j < board->getWidth() - 1; j++)
+				{
+					savefile << j << "  ";
+				}
+				savefile << board->getWidth() - 1 << "\n";
+
+				savefile << "   ";
+				for (int l = 0; l < board->getWidth() * 3; l++)
+				{
+					savefile << "-";
+				}
+				savefile << "\n";
+
+				for (int m = 0; m < board->getHeight(); m++)
+				{
+					savefile << char('A' + m) << "  |";
+					for (int n = 0; n < board->getWidth(); n++)
+					{	
+						if (board->getCell(m, n)->getTile() == nullptr){
+							savefile << "  " << "|";
+						}
+						else {
+						savefile << board->getCell(m, n)->getTile()->toString() << "|";
+						}
+					}
+
+					savefile << "\n";
+				}
+
+				
+				for (int o = 0; o < tilebag->amountTilesLeft() - 1; o++)
+				{
+					savefile << tilebag->getTiles()->get(o)->toString() << ",";
+				}
+				savefile << tilebag->getTiles()->getTail()->toString() << "\n";
+				savefile << currentPlayer->getName() << "\n";
+				savefile.close();
+				std::cout << "Game successfully saved" << std::endl;
+			}
+			else
+			{
+				std::cout << "Error: Unable to save game" << std::endl;
+			}
+			
 		}
 
 		else {
