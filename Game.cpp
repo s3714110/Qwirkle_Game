@@ -264,7 +264,7 @@ void Game::playerMove(Player* player) {
 			
 		}
 
-		else {
+		else if((move.at(0).compare("replace") == 0 || move.at(0).compare("place") == 0) && move.size() > 0){
 			// player doesnt have tile return
 			Tile* tile = getTile(move.at(1));
 
@@ -288,12 +288,16 @@ void Game::playerMove(Player* player) {
 
 					if (place(tile, row, col)) {
 						player->removeFromHand(tile);
+						counter++;
 					}
 
 				}
 			}
 		}
-		counter++;
+		else{
+			// users entry was invalid
+		}
+		
 	}
 
 }
