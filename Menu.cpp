@@ -61,7 +61,7 @@ Game* Menu::newGame() {
 	playerCount = getPlayerCount();
 
 	// Initialise Player array
-	players = new Player * [playerCount - 1];
+	players = new Player * [playerCount];
 
 	// Initialise Player names
 	for (int i = 0; i < playerCount; i++) {
@@ -69,11 +69,9 @@ Game* Menu::newGame() {
 		std::string name = getPlayerName(i+1);
 		players[i] = new Player(id, name);
 	}
-	displayMessage("\nERROR 1!!!!!!!!!!!!!!!!");
 
 	// Initialise the board
 	board = new Board();
-	displayMessage("\nERROR 2!!!!!!!!!!!!!!!!");
 
 	return new Game(board, players, playerCount);
 }
