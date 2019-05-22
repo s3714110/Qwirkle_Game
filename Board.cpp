@@ -79,8 +79,8 @@ Board::Board(int height, int width) {
 // Tile objects are not destroyed
 Board::~Board() {
 
-	for (int i = 0; i < board.size(); i++) {
-		for (int j = 0; j < board[i].size(); j++) {
+	for (unsigned int i = 0; i < board.size(); i++) {
+		for (unsigned int j = 0; j < board[i].size(); j++) {
 			delete board[i][j];
 		}
 	}
@@ -118,7 +118,7 @@ bool Board::placeTile(Tile* tile, int row, int col) {
 		if (empty) {
 			empty = false;
 		}
-		
+
 		// check if board needs to be expanded
 		if (row == 0) {
 			insertRow(row);
@@ -129,7 +129,7 @@ bool Board::placeTile(Tile* tile, int row, int col) {
 		if (col == 0) {
 			insertColumn(col);
 		}
-		else if (col == width - 1) {			
+		else if (col == width - 1) {
 			insertColumn(width);
 		}
 	}
@@ -144,7 +144,7 @@ bool Board::placeTile(Tile* tile, int row, int col) {
 		Tile* tile	- the tile that is to be placed
 		int row		- indicates row where the tile is placed
 		int col		- indicates column where the tile is placed
-		
+
 
 	Return:
 		bool valid	- matches either shape or color with the other
@@ -225,8 +225,8 @@ bool Board::validMove(Tile* tile, int row, int col) {
 
 	Return:
 		if shape or color match
-				return true	
-		else	
+				return true
+		else
 				return false
 
 	Note:
@@ -276,7 +276,7 @@ bool Board::checkPlayerMoves(int row, int col) {
 	bool valid = true;
 
 	if (!playerMoves.empty()) {
-		for (int i = 0; i < playerMoves.size(); i++) {
+		for (unsigned int i = 0; i < playerMoves.size(); i++) {
 			if (row != playerMoves.at(i)->getRow() && col != playerMoves.at(i)->getColumn()) {
 				valid = false;
 			}
@@ -356,17 +356,17 @@ bool Board::shapeMatch(LinkedList* tiles, Tile* tile) {
 LinkedList* Board::getRow(int row, int col) {
 	LinkedList* tileRow = new LinkedList();
 
-	// Add Left	
+	// Add Left
 	int addCol = col - 1;
-	
+
 	if (addCol >= 0) {
 		Cell* cell = board[row][addCol];
 		while (cell->getTile() != nullptr && addCol >= 0) {
 
 			cell = board[row][addCol];
 			tileRow->add(cell->getTile());
-			
-			addCol--;			
+
+			addCol--;
 		}
 	}
 
@@ -378,7 +378,7 @@ LinkedList* Board::getRow(int row, int col) {
 
 			cell = board[row][addCol];
 			tileRow->add(cell->getTile());
-			
+
 			addCol++;
 		}
 	}
@@ -403,12 +403,12 @@ LinkedList* Board::getRow(int row, int col) {
 LinkedList* Board::getColumn(int row, int col) {
 	LinkedList* tileColumn = new LinkedList();
 
-	// Add Left	
+	// Add Left
 	int addRow = row - 1;
 	if (addRow >= 0) {
 		Cell* cell = board[addRow][col];
 		while (cell->getTile() != nullptr && addRow >= 0) {
-			
+
 			cell = board[addRow][col];
 			tileColumn->add(cell->getTile());
 
@@ -426,7 +426,7 @@ LinkedList* Board::getColumn(int row, int col) {
 			tileColumn->add(cell->getTile());
 
 
-			addRow++;			
+			addRow++;
 		}
 	}
 
@@ -434,7 +434,7 @@ LinkedList* Board::getColumn(int row, int col) {
 }
 
 /*
-	Calculate the total points score for the players move. The function 
+	Calculate the total points score for the players move. The function
 	will calculate the score for each tile that was placed. Making sure not
 	to count the row or column twice.
 
@@ -452,23 +452,23 @@ int Board::getPoints() {
 	std::vector<int> countedRows;
 	std::vector<int> countedColumns;
 
-	for (int i = 0; i < playerMoves.size(); i++) {
+	for (unsigned int i = 0; i < playerMoves.size(); i++) {
 		bool countRow = true;
 		bool countColumn = true;
 
 		Cell* playerMove = playerMoves.at(i);
-		for (int j = 0; j < countedRows.size(); j++) {
+		for (unsigned int j = 0; j < countedRows.size(); j++) {
 			if (playerMove->getRow() == countedRows.at(j)) {
 				countRow = false;
 			}
 		}
-		for (int j = 0; j < countedColumns.size(); j++) {
+		for (unsigned int j = 0; j < countedColumns.size(); j++) {
 			if (playerMove->getColumn() == countedColumns.at(j)) {
 				countColumn = false;
 			}
 		}
 
-		
+
 		if (countRow) {
 			int rowPoint = rowPoints(playerMove);
 			points += rowPoint;
@@ -502,7 +502,7 @@ int Board::getPoints() {
 */
 int Board::rowPoints(Cell* playerMove) {
 	int points = 0;
-	
+
 	int row = playerMove->getRow();
 	int col = playerMove->getColumn();
 
@@ -534,7 +534,7 @@ int Board::rowPoints(Cell* playerMove) {
 		int points - number of points scored on this row
 
 	Note:
-		if the column is empty then the player will not score any 
+		if the column is empty then the player will not score any
 		points on the column
 */
 int Board::columnPoints(Cell* playerMove) {
@@ -581,13 +581,13 @@ void Board::insertRow(int row) {
 	if (row == 0) {
 		board.insert(board.begin(), cellRow);
 		height++;
-		updateCells();		
+		updateCells();
 	}
 	else if (row == height) {
 		board.push_back(cellRow);
 		height++;
 	}
-	
+
 }
 
 /*
@@ -614,7 +614,7 @@ void Board::insertColumn(int col) {
 			board[i].push_back(new Cell(i, col));
 		}
 		width++;
-	}	
+	}
 }
 
 /*
@@ -622,10 +622,9 @@ void Board::insertColumn(int col) {
 	This method is called after the board is expanded
 */
 void Board::updateCells() {
-	for (int i = 0; i < board.size(); i++) {
-		for (int j = 0; j < board[i].size(); j++) {
+	for (unsigned int i = 0; i < board.size(); i++) {
+		for (unsigned int j = 0; j < board[i].size(); j++) {
 			board[i][j]->update(i, j);
 		}
 	}
 }
-

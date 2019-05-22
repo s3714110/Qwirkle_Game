@@ -35,7 +35,7 @@ void Menu::run() {
 					game->run();
 					delete game;
 					exit(EXIT_SUCCESS);
-				}			
+				}
 			}
 			else if (option == 3) {
 				displayMessage("\nShowing student info");
@@ -69,9 +69,11 @@ Game* Menu::newGame() {
 		std::string name = getPlayerName(i+1);
 		players[i] = new Player(id, name);
 	}
+	displayMessage("\nERROR 1!!!!!!!!!!!!!!!!");
 
 	// Initialise the board
 	board = new Board();
+	displayMessage("\nERROR 2!!!!!!!!!!!!!!!!");
 
 	return new Game(board, players, playerCount);
 }
@@ -81,9 +83,9 @@ Game* Menu::newGame() {
 
 	 std::string filename = getFilename();
 	 // Filename to store the name of the file received by the player
-	 
+
 	 std::string line;
-	 
+
 	 std::ifstream saveFile(filename);
 
 	 int playercount = 0;
@@ -97,14 +99,14 @@ Game* Menu::newGame() {
 
 	 std::cout << "Load File: " << filename << std::endl;
 
-	 
+
 	 if (saveFile.is_open())
 	 {
 		 std::cout << "Open File" << std::endl;
 
 		 std::regex nametest("[A-Z]+");
 		 std::regex scoretest("[0-9]+");
-		 std::regex tiletest("([ROYGBP][1-6],)*[ROYGBP][1-6]*);
+		 std::regex tiletest("([ROYGBP][1-6],)*[ROYGBP][1-6]*");
 		 std::regex tilebagtest("([ROYGBP][1-6],)*[ROYGBP][1-6]*$");
 		 std::regex boardcolumntest("[0-9 ]+");
 		 std::regex boardrowtest("([A-Z][ ][ ][|]{1})([ROYGBP ][1-6 ][|])+");
@@ -113,7 +115,7 @@ Game* Menu::newGame() {
 		 bool error = false;
 		 while (std::getline(saveFile, line) && !error) {
 			 if (saveFile.peek() == EOF) {
-				 for (int i = 0; i < playersVector.size(); i++) {
+				 for (unsigned int i = 0; i < playersVector.size(); i++) {
 					 if (0 == line.compare(playersVector.at(i)->getName())) {
 						 currentPlayer = i;
 					 }
@@ -121,8 +123,8 @@ Game* Menu::newGame() {
 			 }
 			 else if (std::regex_match(line, m, nametest)) {
 				 std::cout << "get player" << std::endl;
-				 
-				 
+
+
 				 playercount++;
 				 playersVector.push_back(new Player(std::to_string(playercount), line));
 
@@ -150,7 +152,7 @@ Game* Menu::newGame() {
 					 else {
 						 error = true;
 					 }
-				 }				
+				 }
 			 }
 			 else if (std::regex_match(line.begin(), line.end(), boardcolumntest)) {
 
@@ -159,7 +161,7 @@ Game* Menu::newGame() {
 
 				 std::getline(saveFile, line);
 			 }
-			 else if (std::regex_match(line.begin(), line.end(), boardrowtest)) {				 
+			 else if (std::regex_match(line.begin(), line.end(), boardrowtest)) {
 				 int column = -1;
 				 std::istringstream tiles(line);
 				 std::string tile;
@@ -191,13 +193,13 @@ Game* Menu::newGame() {
 				 error = true;
 			 }
 
-		 }		 
+		 }
 		 saveFile.close();
 
 		 if (!error) {
 			 Board* board = new Board(boardheight, boardwidth);
 			 Player** players = new Player * [playersVector.size()];
-			 for (int i = 0; i < playersVector.size(); i++) {
+			 for (unsigned int i = 0; i < playersVector.size(); i++) {
 				 Player* player = playersVector.at(i);
 				 players[i] = player;
 			 }
@@ -206,26 +208,26 @@ Game* Menu::newGame() {
 			 game = new Game(board, players, playercount, tilebag, currentPlayer);
 
 			 //initialise board
-			 for (int i = 0; i < boardTiles.size(); i++) {
+			 for (unsigned int i = 0; i < boardTiles.size(); i++) {
 				std::pair<std::string, std::pair<int, int>> boardTile = boardTiles.at(i);
 				int row = boardTile.second.first;
 				int col = boardTile.second.second;
-				
+
 				board->setTile(game->getTile(boardTile.first), row, col);
 
 			 }
 
 			 //initialise player hands
-			 for (int i = 0; i < playerHands.size(); i++) {
+			 for (unsigned int i = 0; i < playerHands.size(); i++) {
 				 std::vector<std::string> playerHand = playerHands.at(i);
 				 Player* player = players[i];
-				 for (int j = 0; j < playerHand.size(); j++) {
+				 for (unsigned int j = 0; j < playerHand.size(); j++) {
 					 player->addToHand(game->getTile(playerHand.at(j)));
 				 }
 			 }
 
 			 // intialise bag
-			 for (int i = 0; i < bagTiles.size(); i++) {
+			 for (unsigned int i = 0; i < bagTiles.size(); i++) {
 				 tilebagList->add(game->getTile(bagTiles.at(i)));
 			 }
 		 }

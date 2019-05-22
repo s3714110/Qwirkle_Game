@@ -80,7 +80,7 @@ void LinkedList::addTail(Tile* tile) {
 }
 
 void LinkedList::remove(Tile* tile) {
-	
+
 	Node* delNode = head;
 	Node* prev = nullptr;
 
@@ -110,6 +110,7 @@ void LinkedList::remove(int index) {
 	if (index == 0) {
 		removeHead();
 	}
+	
 	else if (index > 0 && index < count) {
 		Node* delNode = getNode(index);
 		Node* prev = getNode(index - 1);
@@ -117,9 +118,11 @@ void LinkedList::remove(int index) {
 		removeNode(prev, delNode);
 	}
 }
+
 void LinkedList::removeHead() {
 	removeHeadNode();
 }
+
 void LinkedList::removeTail() {
 	removeTailNode();
 }
@@ -200,6 +203,7 @@ void LinkedList::removeNode(Node* prev, Node* delNode) {
 	delete delNode;
 	count--;
 }
+
 void LinkedList::removeHeadNode() {
 	Node* delNode = head;
 

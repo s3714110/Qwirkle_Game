@@ -4,7 +4,7 @@
 TileBag::TileBag(LinkedList* tiles) {
 	shuffledList = tiles;
 	amountTiles = shuffledList->size();
-	
+
 	if (tiles->size() > 0) {
 		shuffledList = shuffleBag(shuffledList);
 	}
@@ -34,7 +34,7 @@ LinkedList* TileBag::shuffleBag(LinkedList* unshuffledList){
 	// Add tiles to the shuffled list from the unshuffled list
 	amountTiles = unshuffledList->size();
 	for(int i=0;i<amountTiles;i++){
-		std::uniform_int_distribution<int> uniform_dist(1, unshuffledList->size());
+		std::uniform_int_distribution<int> uniform_dist(0, unshuffledList->size()-1);
 		int index = uniform_dist(engine);
 		shuffledList->add(unshuffledList->get(index));
 		unshuffledList->remove(index);
