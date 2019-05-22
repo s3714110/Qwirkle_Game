@@ -195,7 +195,7 @@ void Game::playerMove(Player* player) {
 			displayMessage("Enter \"help\" for list of commands");
 		}
 
-		else if(move.at(0).compare("end") == 0 && !tilePlaced){
+		else if(move.at(0).compare("end") == 0 && tilePlaced){
 			player->addToScore(board->getPoints());
 			end = true;
 		}
