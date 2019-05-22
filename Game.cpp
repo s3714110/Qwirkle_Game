@@ -180,7 +180,7 @@ void Game::run() {
 void Game::playerMove(Player* player) {
 
 	bool end = false;
-	int counter = 0;
+	bool tilePlaced = false;
 
 	while(!end){
 		displayMessage("\n\n" + player->getName() + ", its your turn!\n");
@@ -195,7 +195,7 @@ void Game::playerMove(Player* player) {
 			displayMessage("Enter \"help\" for list of commands");
 		}
 
-		else if(move.at(0).compare("end") == 0 && counter > 0){
+		else if(move.at(0).compare("end") == 0 && !tilePlaced){
 			player->addToScore(board->getPoints());
 			end = true;
 		}
@@ -272,7 +272,7 @@ void Game::playerMove(Player* player) {
 				
 				// Passed all checks
 				// Do Replace
-				if (move.at(0).compare("replace") == 0 && counter < 1) {
+				if (move.at(0).compare("replace") == 0 && !tilePlaced) {
 					if (replace(player, tile)) {
 						end = true;
 					}
@@ -288,7 +288,7 @@ void Game::playerMove(Player* player) {
 
 					if (place(tile, row, col)) {
 						player->removeFromHand(tile);
-						counter++;
+						tilePlaced = true;
 					}
 
 				}
