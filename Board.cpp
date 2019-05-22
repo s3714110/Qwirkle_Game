@@ -155,62 +155,58 @@ bool Board::placeTile(Tile* tile, int row, int col) {
 */
 bool Board::validMove(Tile* tile, int row, int col) {
 	bool valid = false;
+	
 
-	LinkedList* tileRow = getRow(row, col);
-	LinkedList* tileColumn = getColumn(row, col);
-
-	// if the row is outside the board dimensions (invalid)
-	if (row >= height || row < 0) {
-		valid = false;
+	// if the row and column are inside the board dimensions (check the rules)
+	if (row < height && row >= 0 && col < width && col >= 0) {
+		LinkedList* tileRow = getRow(row, col);
+		LinkedList* tileColumn = getColumn(row, col);
+		
+		// if the cell is not empty (invalid)
+		if (!board[row][col]->isEmpty()) {
+			std::cout << "Cell Not Empty" << std::endl;
+			valid = false;
+		}
+		// if the row and column are empty and the board is not empty (invalid)
+		else if (tileRow->size() == 0 && tileColumn->size() == 0 && !empty) {
+			std::cout << "Row and Column Empty" << std::endl;
+			valid = false;
+		}
+		// if the row or column are already full (invalid)
+		else if (tileRow->size() == qwirkle || tileColumn->size() == qwirkle) {
+			std::cout << "Row or Column Qwirkle" << std::endl;
+			valid = false;
+		}
+		// if the row or column already contain the tile (invalid)
+		else if (tileRow->contains(tile) || tileColumn->contains(tile)) {
+			std::cout << "Row or column contain tile" << std::endl;
+			valid = false;
+		}
+		// if the row check does not match and row is not empty (invalid)
+		else if (!checkRowMatch(tileRow, tile) && tileRow->size() > 0){
+			std::cout << "Row does not match" << std::endl;
+			valid = false;
+		}
+		// if the row check does not match and row is not empty (invalid)
+		else if (!checkColumnMatch(tileColumn,tile) && tileColumn->size() > 0) {
+			std::cout << "Column does not match" << std::endl;
+			valid = false;
+		}
+		// if not on same line with other tiles in the current move (invalid)
+		else if (!checkPlayerMoves(row,col)) {
+			std::cout << "Player previous moves dont match" << std::endl;
+			valid = false;
+		}
+		// move is valid
+		else {
+			std::cout << "Valid move" << std::endl;
+			valid = true;
+		}
+		
+		delete tileRow;
+		delete tileColumn;
 	}
-	// if the column is outside the board dimensions (invalid)
-	else if (col >= width || col < 0) {
-		valid = false;
-	}
-	// if the cell is not empty (invalid)
-	else if (!board[row][col]->isEmpty()) {
-		std::cout << "Cell Not Empty" << std::endl;
-		valid = false;
-	}
-	// if the row and column are empty and the board is not empty (invalid)
-	else if (tileRow->size() == 0 && tileColumn->size() == 0 && !empty) {
-		std::cout << "Row and Column Empty" << std::endl;
-		valid = false;
-	}
-	// if the row or column are already full (invalid)
-	else if (tileRow->size() == qwirkle || tileColumn->size() == qwirkle) {
-		std::cout << "Row or Column Qwirkle" << std::endl;
-		valid = false;
-	}
-	// if the row or column already contain the tile (invalid)
-	else if (tileRow->contains(tile) || tileColumn->contains(tile)) {
-		std::cout << "Row or column contain tile" << std::endl;
-		valid = false;
-	}
-	// if the row check does not match and row is not empty (invalid)
-	else if (!checkRowMatch(tileRow, tile) && tileRow->size() > 0){
-		std::cout << "Row does not match" << std::endl;
-		valid = false;
-	}
-	// if the row check does not match and row is not empty (invalid)
-	else if (!checkColumnMatch(tileColumn,tile) && tileColumn->size() > 0) {
-		std::cout << "Column does not match" << std::endl;
-		valid = false;
-	}
-	// if not on same line with other tiles in the current move (invalid)
-	else if (!checkPlayerMoves(row,col)) {
-		std::cout << "Player previous moves dont match" << std::endl;
-		valid = false;
-	}
-	// move is valid
-	else {
-		std::cout << "Valid move" << std::endl;
-		valid = true;
-	}
-
-	delete tileRow;
-	delete tileColumn;
-
+	
 
 	return valid;
 }
