@@ -154,7 +154,7 @@ Tile* Game::getTile(std::string tileString) {
 void Game::run() {
 	bool endgame = false;
 	currentPlayer = nullptr;
-	
+
 	while (endgame == false) {
 		currentPlayer = players[playerTurn];
 
@@ -205,7 +205,7 @@ void Game::playerMove(Player* player) {
 			std::ofstream savefile(move.at(1));
 			if (savefile.is_open())
 			{
-				
+
 				for (int i = 0; i < playerCount; i++)
 				{
 					savefile << players[i]->getName() << "\n";
@@ -235,7 +235,7 @@ void Game::playerMove(Player* player) {
 				{
 					savefile << char('A' + m) << "  |";
 					for (int n = 0; n < board->getWidth(); n++)
-					{	
+					{
 						if (board->getCell(m, n)->getTile() == nullptr){
 							savefile << "  " << "|";
 						}
@@ -247,7 +247,7 @@ void Game::playerMove(Player* player) {
 					savefile << "\n";
 				}
 
-				
+
 				for (int o = 0; o < tilebag->amountTilesLeft() - 1; o++)
 				{
 					savefile << tilebag->getTiles()->get(o)->toString() << ",";
@@ -261,7 +261,7 @@ void Game::playerMove(Player* player) {
 			{
 				std::cout << "Error: Unable to save game" << std::endl;
 			}
-			
+
 		}
 
 		else if((move.at(0).compare("replace") == 0 || move.at(0).compare("place") == 0) && move.size() > 0){
@@ -269,7 +269,7 @@ void Game::playerMove(Player* player) {
 			Tile* tile = getTile(move.at(1));
 
 			if (player->hasTile(tile)) {
-				
+
 				// Passed all checks
 				// Do Replace
 				if (move.at(0).compare("replace") == 0 && !tilePlaced) {
@@ -290,14 +290,13 @@ void Game::playerMove(Player* player) {
 						player->removeFromHand(tile);
 						tilePlaced = true;
 					}
-
 				}
 			}
 		}
 		else{
-			// users entry was invalid
+			displayMessage("\nInvalid Move\n");
 		}
-		
+
 	}
 
 }

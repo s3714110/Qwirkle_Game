@@ -269,7 +269,6 @@ std::string getUserInput_tile() {
 
 std::vector<std::string> getUserInput_move() {
 	std::vector<std::string> move;
-
 	std::string input = getUserInput_string();
 
 	std::regex place_regex("^place [ROYGBP][1-6] at [A-Z][0-9][0-9]?$");
